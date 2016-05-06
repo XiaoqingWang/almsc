@@ -29,12 +29,12 @@ season = (case month when 3 then 1 when 4 then 1 when 5 then 1
                      when 9 then 3 when 10 then 3 when 11 then 3
                      when 12 then 4 when 1 then 4 when 2 then 4
                      else 0 end),
-week = week(ds),
-weekday = weekday(ds),
-holiday = (case weekday when 0 then 0 when 1 then 0 when 2 then 0 when 3 then 0 
-                        when 4 then 0 when 5 then 1 when 6 then 1 else 0 end),
+week = week(ds, 0),
+weekday = dayofweek(ds),
+holiday = (case weekday when 1 then 0 when 2 then 0 when 3 then 0 when 4 then 0 
+                        when 5 then 0 when 6 then 1 when 7 then 1 else 0 end),
 n_holidays = (case holiday when 0 then 0 when 1 then 2 else 0 end),
-i_holidays = (case weekday when 5 then 1 when 6 then 2 else 0 end);
+i_holidays = (case weekday when 6 then 1 when 7 then 2 else 0 end);
 
 --holiday
 update mars_tianchi_ds set holiday = 1, n_holidays=3, i_holidays=1 where ds = '20150404';

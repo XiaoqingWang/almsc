@@ -36,6 +36,7 @@ def init():
     step1_1 = ('OneHotEncoder', OneHotEncoder(sparse=False, handle_unknown='ignore'))
     step1_2 = ('StandardScaler', StandardScaler())
     step1 = ('FeatureUnionExt', FeatureUnionExt(transformer_list=[step1_1, step1_2], idx_list=[range(8), range(8, 13)]))
+#    step1 = ('FeatureUnionExt', FeatureUnionExt(transformer_list=[step1_1], idx_list=[range(8)]))
     step2 = ('model', GradientBoostingRegressor())
 
     pipeline = Pipeline(steps=[step1, step2])

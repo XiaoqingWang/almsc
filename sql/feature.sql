@@ -13,21 +13,25 @@ mars_tianchi_features.n_holidays = mars_tianchi_ds.n_holidays,
 mars_tianchi_features.i_holidays = mars_tianchi_ds.i_holidays;
 
 --artist
-select @begin_week_train:=week(min(ds)) from mars_tianchi_features where is_train = '1';
-select @begin_week_test:=week(min(ds)) from mars_tianchi_features where is_train = '0';
+select @begin_week_train:=week(min(ds), 0) from mars_tianchi_features where is_train = '1';
+select @begin_week_test:=week(min(ds), 0) from mars_tianchi_features where is_train = '0';
 alter table mars_tianchi_features drop column plays_last_1_week, drop column plays_last_2_week, drop column plays_last_3_week, drop column plays_last_4_week, drop column plays_last_5_week;
 alter table mars_tianchi_features add(plays_last_1_week int, plays_last_2_week int, plays_last_3_week int, plays_last_4_week int, plays_last_5_week int);
 update mars_tianchi_features set
-mars_tianchi_features.plays_last_1_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_train - week(mars_tianchi_artist_actions.ds) = 1),
-mars_tianchi_features.plays_last_2_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_train - week(mars_tianchi_artist_actions.ds) = 2),
-mars_tianchi_features.plays_last_3_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_train - week(mars_tianchi_artist_actions.ds) = 3),
-mars_tianchi_features.plays_last_4_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_train - week(mars_tianchi_artist_actions.ds) = 4),
-mars_tianchi_features.plays_last_5_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_train - week(mars_tianchi_artist_actions.ds) = 5)
+mars_tianchi_features.plays_last_1_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_train - week(mars_tianchi_artist_actions.ds, 0) = 1),
+mars_tianchi_features.plays_last_2_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_train - week(mars_tianchi_artist_actions.ds, 0) = 2),
+mars_tianchi_features.plays_last_3_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_train - week(mars_tianchi_artist_actions.ds, 0) = 3),
+mars_tianchi_features.plays_last_4_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_train - week(mars_tianchi_artist_actions.ds, 0) = 4),
+mars_tianchi_features.plays_last_5_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_train - week(mars_tianchi_artist_actions.ds, 0) = 5)
 where mars_tianchi_features.is_train = '1';
 update mars_tianchi_features set
-mars_tianchi_features.plays_last_1_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type = '1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_test - week(mars_tianchi_artist_actions.ds) = 1),
-mars_tianchi_features.plays_last_2_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type = '1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_test - week(mars_tianchi_artist_actions.ds) = 2),
-mars_tianchi_features.plays_last_3_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type = '1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_test - week(mars_tianchi_artist_actions.ds) = 3),
-mars_tianchi_features.plays_last_4_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type = '1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_test - week(mars_tianchi_artist_actions.ds) = 4),
-mars_tianchi_features.plays_last_5_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type = '1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_test - week(mars_tianchi_artist_actions.ds) = 5)
+mars_tianchi_features.plays_last_1_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type = '1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_test - week(mars_tianchi_artist_actions.ds, 0) = 1),
+mars_tianchi_features.plays_last_2_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type = '1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_test - week(mars_tianchi_artist_actions.ds, 0) = 2),
+mars_tianchi_features.plays_last_3_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type = '1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_test - week(mars_tianchi_artist_actions.ds, 0) = 3),
+mars_tianchi_features.plays_last_4_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type = '1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_test - week(mars_tianchi_artist_actions.ds, 0) = 4),
+mars_tianchi_features.plays_last_5_week = (select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type = '1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and @begin_week_test - week(mars_tianchi_artist_actions.ds, 0) = 5)
 where mars_tianchi_features.is_train = '0';
+
+--artist&day
+select @begin_day_train:=min(ds) from mars_tianchi_features where is_train = '1';
+select @begin_day_test:=min(ds) from mars_tianchi_features where is_train = '0';
