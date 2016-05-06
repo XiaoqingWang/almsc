@@ -1,6 +1,6 @@
 --time
-alter table mars_tianchi_features drop column month, drop column day, drop column season, drop column week, drop column weekday, drop column holiday, drop column n_holiday, drop column i_holiday; 
-alter table mars_tianchi_features add (month int, day int, season int, week int, weekday int, holiday int, n_holiday int, i_holiday int);
+alter table mars_tianchi_features drop column month, drop column day, drop column season, drop column week, drop column weekday, drop column holiday, drop column n_holidays, drop column i_holidays; 
+alter table mars_tianchi_features add (month int, day int, season int, week int, weekday int, holiday int, n_holidays int, i_holidays int);
 update mars_tianchi_features
 left join mars_tianchi_ds on mars_tianchi_features.ds = mars_tianchi_ds.ds set
 mars_tianchi_features.month = mars_tianchi_ds.month,
@@ -9,8 +9,8 @@ mars_tianchi_features.season = mars_tianchi_ds.season,
 mars_tianchi_features.week = mars_tianchi_ds.week,
 mars_tianchi_features.weekday = mars_tianchi_ds.weekday,
 mars_tianchi_features.holiday = mars_tianchi_ds.holiday,
-mars_tianchi_features.n_holiday = mars_tianchi_ds.n_holiday,
-mars_tianchi_features.i_holiday = mars_tianchi_ds.i_holiday;
+mars_tianchi_features.n_holidays = mars_tianchi_ds.n_holidays,
+mars_tianchi_features.i_holidays = mars_tianchi_ds.i_holidays;
 
 --artist
 select @begin_week_train:=week(min(ds)) from mars_tianchi_features where is_train = '1';
