@@ -1,16 +1,12 @@
 import numpy as np
-import MySQLdb
+from base import connect
 
-_host = 'localhost'
-_user = 'root'
-_password = 'Almsc@2016'
-_database = 'almsc'
 _features = ['month', 'day', 'season', 'week', 'weekday', 'holiday', 'n_holiday', 'i_holiday', 'plays_last_1_week', 'plays_last_2_week', 'plays_last_3_week', 'plays_last_4_week', 'plays_last_5_week']
 
 
 def feature(isTrain=True):
     sql = 'select artist_id, ds, plays, %s from mars_tianchi_features where is_train = \'%s\' order by artist_id, ds' % (', '.join(_features), '1' if isTrain else '0')
-    db = MySQLdb.connect(_host, _user, _password, _database)
+    db = connect()
     cursor = db.cursor()
     cursor.execute(sql)
     data = np.array(cursor.fetchall())

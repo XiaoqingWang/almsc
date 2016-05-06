@@ -1,5 +1,14 @@
+import MySQLdb
 import numpy as np
 from sklearn.preprocessing import Imputer
+
+_host = 'almsc'
+_user = 'root'
+_password = 'Almsc@2016'
+_database = 'almsc'
+
+def connect():
+    return MySQLdb.connect(_host, _user, _password, _database)
 
 def score(model, n_artists, n_days, X, y):
     y = y.reshape(n_artists, n_days)
