@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 import numpy as np
-from base import init, score
-from feature_extract import feature
+from model import init, score
+from extract import feature
 
 def main():
     sample, X, y = feature()
+    print '[shape]', X.shape
 
     model = init().fit(X, y)
     print '[coef]', model.get_params()['model'].feature_importances_
