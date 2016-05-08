@@ -3,6 +3,8 @@ from sklearn.preprocessing import Imputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.svm import SVR
 from sklearn.pipeline import Pipeline
 from extract import encoder_list
 
@@ -26,7 +28,8 @@ def score(model, X, y):
 def init():
     step1 = ('OneHotEncoder', OneHotEncoder(sparse=False, handle_unknown='ignore',categorical_features = encoder_list()))
     step2 = ('StandardScaler', StandardScaler())
-    step3 = ('model', GradientBoostingRegressor())
+#    step3 = ('model', GradientBoostingRegressor())
+    step3 = ('model', RandomForestRegressor())
 
     pipeline = Pipeline(steps=[step1, step2, step3])
     return pipeline

@@ -98,7 +98,7 @@ def main():
     endTest = border(isTrain=False, isBegin=False)
     print '[train]', beginTrain, endTrain
     print '[test]', beginTest, endTest
-    showPredict(i_artists=4)
+    showPredict(i_artists=0)
 #    showArtist(begin=beginTrain, end=endTrain)
 #    showDay(begin=beginTrain, end=endTrain)
 #    showArtistDay(begin=beginTrain, end=endTrain, i_artists=0)

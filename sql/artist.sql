@@ -16,37 +16,22 @@ select mars_tianchi_songs.artist_id, mars_tianchi_songs.song_id, mars_tianchi_us
 where mars_tianchi_songs.song_id = mars_tianchi_user_actions.song_id
 group by mars_tianchi_songs.artist_id, mars_tianchi_songs.song_id, mars_tianchi_user_actions.ds, mars_tianchi_user_actions.action_type;
 
---artist song month actions
-drop table if exists mars_tianchi_artist_song_month_actions;
-create table mars_tianchi_artist_song_month_actions
-(
-artist_id char(32),
-month int,
-action_type char(1),
-sum_n int,
-max_n int,
-min_n int,
-avg_n float,
-std_n float,
-primary key(artist_id, month, action_type)
-);
-insert into mars_tianchi_artist_song_month_actions 
-select artist_id, month(ds) as month, action_type, sum(n), max(n), min(n), avg(n), std(n) from mars_tianchi_song_actions group by artist_id, month, action_type;
-
-
 --all artists
 drop table if exists mars_tianchi_artists;
 create table mars_tianchi_artists
 (
 artist_id char(32),
+artist_code int,
 n_songs int,
 gender char(1),
 n_languages int,
 mode_language int,
 primary key(artist_id)
 );
-insert into mars_tianchi_artists(artist_id)
-select distinct(artist_id) as artist_id from mars_tianchi_songs;
+set @artist_code:=0;
+insert into mars_tianchi_artists(artist_id, artist_code)
+select artist_id, @artist_code:=@artist_code+1 from (
+select distinct(artist_id) from mars_tianchi_songs) t;
 
 --artist actions
 drop table if exists mars_tianchi_artist_actions;
@@ -101,4 +86,39 @@ primary key(artist_id, week, action_type)
 );
 insert into mars_tianchi_artist_week_actions 
 select artist_id, week(ds, 0) as week, action_type, sum(n), max(n), min(n), avg(n), std(n) from mars_tianchi_artist_actions group by artist_id, week, action_type;
+
+--artist month weekday actions
+drop table if exists mars_tianchi_artist_month_weekday_actions;
+create table mars_tianchi_artist_month_weekday_actions
+(
+artist_id char(32),
+month int,
+weekday int,
+action_type char(1),
+sum_n int,
+max_n int,
+min_n int,
+avg_n float,
+std_n float,
+primary key(artist_id, month, weekday, action_type)
+);
+insert into mars_tianchi_artist_month_weekday_actions 
+select artist_id, month(ds) as month, dayofweek(ds) as weekday, action_type, sum(n), max(n), min(n), avg(n), std(n) from mars_tianchi_artist_actions group by artist_id, month, weekday, action_type;
+
+--artist month song actions
+drop table if exists mars_tianchi_artist_month_song_actions;
+create table mars_tianchi_artist_month_song_actions
+(
+artist_id char(32),
+month int,
+action_type char(1),
+sum_n int,
+max_n int,
+min_n int,
+avg_n float,
+std_n float,
+primary key(artist_id, month, action_type)
+);
+insert into mars_tianchi_artist_month_song_actions 
+select artist_id, month(ds) as month, action_type, sum(n), max(n), min(n), avg(n), std(n) from mars_tianchi_song_actions group by artist_id, month, action_type;
 
