@@ -5,7 +5,8 @@ _features = {'month': True, 'day':True, 'season':True, 'week':True, 'weekday':Tr
 'artist_code':True, 'plays_last_1_week':False, 'plays_last_2_week':False, 'plays_last_3_week':False, 'plays_last_4_week':False, 'plays_last_5_week':False, 
 'n_songs':False, 'gender':True, 'n_languages':False, 'mode_language':False,
 'avg_artist_song_plays_last_1_month':False, 'std_artist_song_plays_last_1_month':False, 'avg_artist_song_plays_last_2_month':False, 'std_artist_song_plays_last_2_month':False,
-'offset_first_song':False, 'offset_last_song':False, 'avg_plays_same_weekday':False, 'avg_plays_same_day':False}
+'offset_first_song':False, 'offset_last_song':False, 
+'avg_plays_same_weekday':False, 'avg_plays_same_day':False, 'qoq_plays_last_1_week':False, 'qoq_plays_last_2_week':False, 'qoq_plays_last_3_week':False, 'yoy_plays':False}
 
 def encoder_list():
     idx_list = range(len(_features))
