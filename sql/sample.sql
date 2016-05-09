@@ -26,7 +26,7 @@ update mars_tianchi_features left join mars_tianchi_artist_actions
 on mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id
 and mars_tianchi_features.ds = mars_tianchi_artist_actions.ds
 and mars_tianchi_artist_actions.action_type = '1'
-set mars_tianchi_features.plays = mars_tianchi_artist_actions.n
+set mars_tianchi_features.plays = mars_tianchi_artist_actions.n;
 
 --delete abnormal artist
 select * 

@@ -32,7 +32,7 @@ def init():
     step1 = ('OneHotEncoder', OneHotEncoder(sparse=False, handle_unknown='ignore',categorical_features = encoder_list()))
     step2 = ('StandardScaler', StandardScaler())
 #    step3 = ('RFE', RFE(estimator=GradientBoostingRegressor(), n_features_to_select=10))
-    step3 = ('SelectFromModel', SelectFromModel(GradientBoostingRegressor()))
+#    step3 = ('SelectFromModel', SelectFromModel(GradientBoostingRegressor()))
 #    step4 = ('model', GradientBoostingRegressor())
     step4 = ('model', GradientBoostingRegressor())
     pipeline = Pipeline(steps=[step1, step2, step4])
