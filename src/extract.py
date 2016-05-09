@@ -6,9 +6,11 @@ _features = {'month': True, 'day':True, 'season':True, 'week':True, 'weekday':Tr
 'collects_last_1_week':False, 'collects_last_2_week':False, 'collects_last_3_week':False, 'collects_last_4_week':False, 'collects_last_5_week':False, 
 'n_songs':False, 'gender':True, 'n_languages':False, 'mode_language':False,
 'avg_artist_song_plays_last_1_month':False, 'std_artist_song_plays_last_1_month':False, 'avg_artist_song_plays_last_2_month':False, 'std_artist_song_plays_last_2_month':False,
-'offset_first_song':False, 'offset_last_song':False, 
-'avg_plays_same_weekday':False, 'avg_plays_same_day':False, 'std_plays_same_weekday':False, 'std_plays_same_day':False,
-'qoq_plays_last_1_week':False, 'qoq_plays_last_2_week':False, 'qoq_plays_last_3_week':False, 'yoy_plays':False}
+'offset_first_song':False, 'offset_last_song':False, 'avg_continuous_rise_10':False, 'avg_continuous_maintain_10':False, 'avg_continuous_decline_10':False, 'avg_continuous_rise_10_days':False, 'avg_continuous_maintain_10_days':False, 'avg_continuous_decline_10_days':False,
+'plays_last_1_day':False, 'avg_plays_same_weekday':False, 'avg_plays_same_day':False, 'std_plays_same_weekday':False, 'std_plays_same_day':False,
+'qoq_plays_last_1_week':False, 'qoq_plays_last_2_week':False, 'qoq_plays_last_3_week':False, 'yoy_plays':False,
+'trend_last_1_day':True, 'n_trend_days_last_1_day':False
+}
 
 def encoder_list():
     idx_list = range(len(_features))

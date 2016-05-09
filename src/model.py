@@ -12,7 +12,7 @@ from sklearn.grid_search import GridSearchCV
 from extract import encoder_list
 
 _n_artists = 50
-_n_days = 61
+_n_days = 1
 
 def score(model, X, y):
     y = y.reshape(_n_artists, _n_days)
