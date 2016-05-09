@@ -1,7 +1,7 @@
 set @train_begin:='20150501';
 set @train_end:='20150630';
 set @test_begin:='20150701';
-set @test_end:='20150830';
+set @test_end:='20150701';
 
 --sample
 drop table if exists mars_tianchi_features;

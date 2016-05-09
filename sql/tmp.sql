@@ -31,7 +31,7 @@ drop procedure if exists wk;
 --/
 create procedure wk() 
 begin 
-set @end:='20150430';
+set @end:='20150702';
 set @i:=1;
 set @action_type:='1';
 while @i <= 50 do
