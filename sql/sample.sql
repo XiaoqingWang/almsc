@@ -1,7 +1,7 @@
 set @train_begin:='20150501';
 set @train_end:='20150630';
 set @test_begin:='20150701';
-set @test_end:='20150830';
+set @test_end:='20150701';
 
 --sample
 drop table if exists mars_tianchi_features;
@@ -26,7 +26,7 @@ update mars_tianchi_features left join mars_tianchi_artist_actions
 on mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id
 and mars_tianchi_features.ds = mars_tianchi_artist_actions.ds
 and mars_tianchi_artist_actions.action_type = '1'
-set mars_tianchi_features.plays = mars_tianchi_artist_actions.n
+set mars_tianchi_features.plays = mars_tianchi_artist_actions.n;
 
 --delete abnormal artist
 select * 
