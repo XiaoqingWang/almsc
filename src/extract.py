@@ -32,9 +32,9 @@ def border(isBegin=True, isTrain=True):
     return data[0,0]
 
 def feature(isTrain=True):
-    sql = 'select artist_id, ds, plays, %s from mars_tianchi_features where is_train = \'%d\' order by artist_id, ds' % (', '.join(_features.keys()), 1 if isTrain else 0)
+    sql = 'select artist_id, ds, plays, weight, %s from mars_tianchi_features where is_train = \'%d\' order by artist_id, ds' % (', '.join(_features.keys()), 1 if isTrain else 0)
     data = fetchall(sql)
-    return (data[:,[0,1]], data[:,3:].astype('float64'), data[:,2].astype('int64'))
+    return (data[:,[0,1]], data[:,4:].astype('float64'), data[:,2].astype('int64'), data[:,3].astype('float64'))
 
 def artist(begin=None, end=None, actionType=1):
     sql = 'select artist_id, sum(n) as plays from mars_tianchi_artist_actions where action_type = \'%d\'' % actionType

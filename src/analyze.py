@@ -2,30 +2,30 @@ import datetime
 import numpy as np
 from matplotlib import pyplot as plt 
 from matplotlib.dates import date2num
-from model import init, _n_artists, _n_days
+from base import init, n_artists, n_days
 from extract import border, feature, artist, day, artist_day
 from database import connect
 
 
 def showPredict(i_artists=0):
-    assert(i_artists in range(0, _n_artists+1))
-    sample, X, y = feature()
+    assert(i_artists in range(0, n_artists+1))
+    sample, X, y, weight = feature()
 
-    model = init().fit(X, y)
+    model = init().fit(X, y, sample_weight=weight)
 
-    sample, X, y = feature(isTrain=False)
+    sample, X, y, weight = feature(isTrain=False)
     y_predict = model.predict(X)
 
     first_day = datetime.datetime.strptime(sample[0,1], '%Y%m%d')
-    x_data = np.arange(_n_days) + date2num(first_day)
+    x_data = np.arange(n_days) + date2num(first_day)
     if i_artists > 0:
-        y_data_1 = y[(i_artists-1) * _n_days:i_artists * _n_days]
-        y_data_2 = y_predict[(i_artists-1) * _n_days:i_artists * _n_days]
-        plt.title('Plays of Artist[%s] per Day' % sample[(i_artists-1) * _n_days,0])
-        print '[artist]', sample[(i_artists-1) * _n_days,0]
+        y_data_1 = y[(i_artists-1) * n_days:i_artists * n_days]
+        y_data_2 = y_predict[(i_artists-1) * n_days:i_artists * n_days]
+        plt.title('Plays of Artist[%s] per Day' % sample[(i_artists-1) * n_days,0])
+        print '[artist]', sample[(i_artists-1) * n_days,0]
     else:
-        y_data_1 = np.mean(y.reshape(_n_artists, _n_days), axis=0)
-        y_data_2 = np.mean(y_predict.reshape(_n_artists, _n_days), axis=0)
+        y_data_1 = np.mean(y.reshape(n_artists, n_days), axis=0)
+        y_data_2 = np.mean(y_predict.reshape(n_artists, n_days), axis=0)
         plt.title('Plays of Artists per Day')
 
     plt.plot_date(x_data, y_data_1, fmt='g', label='real')
@@ -50,12 +50,12 @@ def showDay(begin=None, end=None, actionType=1):
 
 def showArtistDay(begin=None, end=None, actionType=1, i_artists=0):
     assert(actionType in range(1, 4))
-    assert(i_artists in range(0, _n_artists+1))
+    assert(i_artists in range(0, n_artists+1))
     artists, days, n_actions = artist_day(begin=begin, end=end, actionType=actionType)
     if i_artists > 0:
-        plt.boxplot([n_actions[(i_artists-1)*_n_days:i_artists*_n_days]], labels=[artists[(i_artists-1)*_n_days]])
+        plt.boxplot([n_actions[(i_artists-1)*n_days:i_artists*n_days]], labels=[artists[(i_artists-1)*n_days]])
     else:
-        plt.boxplot(n_actions.reshape(_n_artists, _n_days).T, labels=artists.reshape(_n_artists, _n_days)[:,0])
+        plt.boxplot(n_actions.reshape(n_artists, n_days).T, labels=artists.reshape(n_artists, n_days)[:,0])
     plt.title('Plays of Artists and Days')
     plt.show()
 
@@ -79,17 +79,17 @@ def abnormalArtistDay(begin=None, end=None, actionType=1, i_artists=0):
     assert(actionType in range(1, 4))
     artists, days, n_actions = artist_day(begin=begin, end=end, actionType=actionType)
     if i_artists > 0:
-        artists = artists.reshape(_n_artists, _n_days)[[i_artists]]
-        days = days.reshape(_n_artists, _n_days)[[i_artists]]
-        n_actions = n_actions.reshape(_n_artists, _n_days)[[i_artists]]
+        artists = artists.reshape(n_artists, n_days)[[i_artists]]
+        days = days.reshape(n_artists, n_days)[[i_artists]]
+        n_actions = n_actions.reshape(n_artists, n_days)[[i_artists]]
     else:
-        artists = artists.reshape(_n_artists, _n_days)
-        days = days.reshape(_n_artists, _n_days)
-        n_actions = n_actions.reshape(_n_artists, _n_days)
+        artists = artists.reshape(n_artists, n_days)
+        days = days.reshape(n_artists, n_days)
+        n_actions = n_actions.reshape(n_artists, n_days)
     mean = np.mean(n_actions, axis=1).reshape(-1,1)
     std = np.std(n_actions, axis=1).reshape(-1,1)
     abs_z_score = np.hstack((artists, days, (np.abs(n_actions - mean) / std)))
-    return map(lambda x:filter(lambda y:float(y[2]) > 3, np.vstack((x[:_n_days], x[_n_days:2*_n_days], x[2*_n_days:])).T), abs_z_score)
+    return map(lambda x:filter(lambda y:float(y[2]) > 3, np.vstack((x[:n_days], x[n_days:2*n_days], x[2*n_days:])).T), abs_z_score)
 
 def main():
     beginTrain = border(isTrain=True, isBegin=True)
