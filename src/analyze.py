@@ -2,7 +2,8 @@ import datetime
 import numpy as np
 from matplotlib import pyplot as plt 
 from matplotlib.dates import date2num
-from base import init, n_artists, n_days
+from base import n_artists, n_days
+from model import init
 from extract import border, feature, artist, day, artist_day
 from database import connect
 
@@ -11,7 +12,7 @@ def showPredict(i_artists=0):
     assert(i_artists in range(0, n_artists+1))
     sample, X, y, weight = feature()
 
-    model = init().fit(X, y, sample_weight=weight)
+    model = init().fit(X, y, **{'model__sample_weight':weight})
 
     sample, X, y, weight = feature(isTrain=False)
     y_predict = model.predict(X)

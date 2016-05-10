@@ -3,7 +3,7 @@ from sklearn.preprocessing import Imputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import RFE
-from sklearn.feature_selection import SelectFromModel
+#from sklearn.feature_selection import SelectFromModel
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.svm import SVR

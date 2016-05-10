@@ -1,7 +1,7 @@
-set @train_begin:='20150501';
-set @train_end:='20150630';
-set @test_begin:='20150701';
-set @test_end:='20150701';
+set @begin_train:='20150501';
+set @end_train:='20150630';
+set @begin_test:='20150701';
+set @end_test:='20150830';
 
 --sample
 drop table if exists mars_tianchi_features;
@@ -11,16 +11,18 @@ artist_id char(32),
 ds char(8),
 plays int,
 is_train char(1), --1:train,0:test
+weight float,
 primary key(artist_id, ds)
 );
 --train
 insert into mars_tianchi_features(artist_id, ds, is_train)
 select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, '1' as is_train from mars_tianchi_artists, mars_tianchi_ds
-where mars_tianchi_ds.ds between @train_begin and @train_end;
+where mars_tianchi_ds.ds between @begin_train and @end_train;
+update mars_tianchi_features set weight = sqrt((select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.artist_id = mars_tianchi_features.artist_id and mars_tianchi_artist_actions.action_type = '1' and mars_tianchi_artist_actions.ds < @begin_train));
 --test
 insert into mars_tianchi_features(artist_id, ds, is_train)
 select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, '0' as is_train from mars_tianchi_artists, mars_tianchi_ds
-where mars_tianchi_ds.ds between @test_begin and @test_end;
+where mars_tianchi_ds.ds between @begin_test and @end_test;
 --all
 update mars_tianchi_features left join mars_tianchi_artist_actions
 on mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id
