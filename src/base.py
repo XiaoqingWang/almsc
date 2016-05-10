@@ -48,5 +48,5 @@ features = {'month': True,
 #'n_trend_days_last_1_day':False,
 }
 
-n_days = 1
+n_days = 61
 n_artists = 50
