@@ -63,5 +63,6 @@ def series(name, begin=None, end=None):
     begin = border(isBegin=True, isTrain=True) if not begin else begin
     end = border(isBegin=False, isTrain=True) if not end else end
     sql = 'select artist_id, ds, name, val from mars_tianchi_series where name = \'%s\' and \'%s\' <= ds and ds <= \'%s\' order by artist_id, ds, name' % (name, begin, end)
+#    print sql
     data =  fetchall(sql)
     return data[:,0], data[:,1], data[:,2], data[:,3].astype('float64')
