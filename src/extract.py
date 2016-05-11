@@ -1,23 +1,14 @@
+from datetime import datetime, timedelta
 import numpy as np
+from base import TIME_FORMAT, N_SERIES_DAYS, MIN_CORRELATION, IS_CATEGORY
 from database import connect
 
-_features = {'month': True, 'day':True, 'season':True, 'week':True, 'weekday':True, 'is_holiday':False, 'n_holidays':True, 'i_holidays':True, 'is_good_voice':False, 'is_music_festival':False,
-'artist_code':True, 'plays_last_1_week':False, 'plays_last_2_week':False, 'plays_last_3_week':False, 'plays_last_4_week':False, 'plays_last_5_week':False, 
-'collects_last_1_week':False, 'collects_last_2_week':False, 'collects_last_3_week':False, 'collects_last_4_week':False, 'collects_last_5_week':False, 
-'n_songs':False, 'gender':True, 'n_languages':False, 'mode_language':False,
-'avg_artist_song_plays_last_1_month':False, 'std_artist_song_plays_last_1_month':False, 'avg_artist_song_plays_last_2_month':False, 'std_artist_song_plays_last_2_month':False,
-'offset_first_song':False, 'offset_last_song':False, 'avg_continuous_rise_10':False, 'avg_continuous_maintain_10':False, 'avg_continuous_decline_10':False, 'avg_continuous_rise_10_days':False, 'avg_continuous_maintain_10_days':False, 'avg_continuous_decline_10_days':False,
-'plays_last_1_day':False, 'avg_plays_same_weekday':False, 'avg_plays_same_day':False, 'std_plays_same_weekday':False, 'std_plays_same_day':False,
-'qoq_plays_last_1_week':False, 'qoq_plays_last_2_week':False, 'qoq_plays_last_3_week':False, 'yoy_plays':False,
-'trend_last_1_day':True, 'n_trend_days_last_1_day':False
-}
+def _getEncoderList(isCategoryList):
+    encoderList = range(isCategoryList.size)
+    encoderList = filter(lambda x:isCategoryList[x] == 1.0, encoderList)
+    return encoderList
 
-def encoder_list():
-    idx_list = range(len(_features))
-    values = _features.values()
-    return filter(lambda x:values[x], idx_list)
-
-def fetchall(sql):
+def _fetchall(sql):
     db = connect()
     cursor = db.cursor()
     cursor.execute(sql)
@@ -25,44 +16,92 @@ def fetchall(sql):
     db.close()
     return data
 
-def border(isBegin=True, isTrain=True):
-    sql = 'select' +  (' min' if isBegin else ' max') + '(ds) from mars_tianchi_features'
-    sql += ' where is_train = \'%d\'' % (1 if isTrain else 0)
-    data =  fetchall(sql)
+def getBorder(isBegin=True, isX = True, isTrain=True):
+    sql = 'select' +  (' min' if isBegin else ' max') + '(ds) from mars_tianchi_samples'
+    sql += ' where is_X = \'%d\'' % (1 if isX else 0)
+    sql += ' and is_train = \'%d\'' % (1 if isTrain else 0)
+    data =  _fetchall(sql)
+    return datetime.strptime(data[0,0], TIME_FORMAT)
+
+def get_n_artists():
+    sql = 'select count(*) from mars_tianchi_artists'
+    data =  _fetchall(sql)
     return data[0,0]
 
-def feature(isTrain=True):
-    sql = 'select artist_id, ds, plays, weight, %s from mars_tianchi_features where is_train = \'%d\' order by artist_id, ds' % (', '.join(_features.keys()), 1 if isTrain else 0)
-    data = fetchall(sql)
-    return (data[:,[0,1]], data[:,4:].astype('float64'), data[:,2].astype('int64'), data[:,3].astype('float64'))
+def get_n_days(isX=True, isTrain=True):
+    begin = getBorder(isBegin=True, isX=isX, isTrain=isTrain)
+    end = getBorder(isBegin=False, isX=isX, isTrain=isTrain)
+    return (end - begin).days + 1
 
-def artist(begin=None, end=None, actionType=1):
-    sql = 'select artist_id, sum(n) as plays from mars_tianchi_artist_actions where action_type = \'%d\'' % actionType
-    if begin: sql += ' and \'%s\' <= ds' % begin
-    if end: sql += ' and ds <= \'%s\'' % end
-    sql += ' group by artist_id'
-    data = fetchall(sql)
-    return (data[:,0], data[:,1].astype('float64'))
+def get_n_series():
+    n_days = get_n_days(isX=False, isTrain=True)
+    return n_days / N_SERIES_DAYS + 1
 
-def day(begin=None, end=None, actionType=1):
-    sql = 'select ds, sum(n) as plays from mars_tianchi_artist_actions where action_type = \'%d\'' % actionType
-    if begin: sql += ' and \'%s\' <= ds' % begin
-    if end: sql += ' and ds <= \'%s\'' % end
-    sql += ' group by ds'
-    data = fetchall(sql)
-    return (data[:,0], data[:,1].astype('float64'))
+def getSeriesRange(i_series, isTrain=True):
+    begin = getBorder(isBegin=True, isX=False, isTrain=isTrain)
+    beginSeries = getBorder(isBegin=True, isX=False, isTrain=isTrain) + timedelta(days=i_series*N_SERIES_DAYS)
+    assert(begin <= beginSeries)
+    end = getBorder(isBegin=False, isX=False, isTrain=isTrain)
+    endSeries = beginSeries + timedelta(days=N_SERIES_DAYS-1)
+    endSeries = end if endSeries > end else endSeries
+    return beginSeries, endSeries
 
-def artist_day(begin=None, end=None, actionType=1):
-    sql = 'select artist_id, ds, n as plays from mars_tianchi_artist_actions where action_type = \'%d\'' % actionType
-    if begin: sql += ' and \'%s\' <= ds' % begin
-    if end: sql += ' and ds <= \'%s\'' % end
-    data = fetchall(sql)
-    return (data[:,0], data[:,1], data[:,2].astype('float64'))
+def _getPlays(artistId, begin=None, end=None, isX=True, isTrain=True):
+    assert(begin is not None and end is not None)
+    sql = 'select plays from mars_tianchi_samples'
+    sql += ' where artist_id = \'%s\' and ds between \'%s\' and \'%s\' and is_X = %d and is_train = %d order by ds' % (artistId, begin.strftime(TIME_FORMAT), end.strftime(TIME_FORMAT), isX, isTrain)
+    data = _fetchall(sql)
+    return data[:,0].astype('int64')
 
-def series(name, begin=None, end=None):
-    begin = border(isBegin=True, isTrain=True) if not begin else begin
-    end = border(isBegin=False, isTrain=True) if not end else end
-    sql = 'select artist_id, ds, name, val from mars_tianchi_series where name = \'%s\' and \'%s\' <= ds and ds <= \'%s\' order by artist_id, ds, name' % (name, begin, end)
-#    print sql
-    data =  fetchall(sql)
-    return data[:,0], data[:,1], data[:,2], data[:,3].astype('float64')
+def _getFeatureDefinations(artistId, i_series, minCorrelation=MIN_CORRELATION):
+    sql = 'select name, is_category, offset from mars_tianchi_feature_definations'
+    sql += ' where artist_id = \'%s\' and i_series = %d and correlation >= %f' % (artistId, i_series, minCorrelation)
+    data = _fetchall(sql)
+    return data[:,0], data[:,1].astype('int64'), data[:,2].astype('int64')
+
+def getFeatures(artistId, i_series, isTrain=True):
+    beginSeries, endSeries = getSeriesRange(i_series, isTrain=isTrain)
+    playsList = _getPlays(artistId, begin=beginSeries, end=endSeries, isX=False, isTrain=isTrain)
+
+    #normal features
+    normalFeatures = None
+    sql = 'select * from mars_tianchi_features'
+    sql += ' where artist_id = \'%s\' and ds between \'%s\' and \'%s\'' % (artistId, beginSeries.strftime(TIME_FORMAT), endSeries.strftime(TIME_FORMAT))
+    data = _fetchall(sql)
+    normalFeatures = data[:,2:].astype('float64')
+
+    #series features
+    seriesFeatures = None
+    nameList, isCategoryList, offsetList = _getFeatureDefinations(artistId, i_series)
+    n_features =  nameList.size
+    for i in range(n_features):
+        name = str(nameList[i])
+        offset = int(offsetList[i])
+        beginVals = beginSeries + timedelta(days=offset)
+        endVals = endSeries + timedelta(days=offset)
+        sql = 'select val from mars_tianchi_series where artist_id = \'%s\' and name = \'%s\' and ds between \'%s\' and \'%s\' order by ds' % (artistId, name, beginVals.strftime(TIME_FORMAT), endVals.strftime(TIME_FORMAT))
+        data = _fetchall(sql)
+        seriesFeatures = data.reshape(-1,1) if seriesFeatures is None else np.hstack((seriesFeatures, data.reshape(-1,1)))
+
+    assert(normalFeatures is not None or seriesFeatures is not None)
+    if normalFeatures is None:
+        features = seriesFeatures
+    elif seriesFeatures is None:
+        features = normalFeatures
+    else:
+        features = np.hstack((normalFeatures, seriesFeatures))
+
+    isCategoryList = np.hstack((IS_CATEGORY, isCategoryList))
+
+    return features, playsList, _getEncoderList(isCategoryList)
+
+def getSeries(name, begin=None, end=None):
+    assert(begin is not None and end is not None)
+    sql = 'select artist_id, val from mars_tianchi_series where name = \'%s\' and ds between \'%s\' and \'%s\' order by artist_id, ds' % (name, begin.strftime(TIME_FORMAT), end.strftime(TIME_FORMAT))
+    data =  _fetchall(sql)
+    return data[:,0], data[:,1].astype('float64')
+
+def getArtistIdList():
+    sql = 'select artist_id from mars_tianchi_artists'
+    data =  _fetchall(sql)
+    return data[:,0]

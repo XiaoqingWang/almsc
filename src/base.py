@@ -1,52 +1,8 @@
-features = {'month': True,
-'day':True,
-'season':True,
-'week':True,
-'weekday':True,
-'is_holiday':False,
-'n_holidays':True,
-'i_holidays':True,
-'is_good_voice':False,
-'is_music_festival':False,
-'artist_code':True,
-'plays_last_1_week':False,
-'plays_last_2_week':False,
-'plays_last_3_week':False,
-'plays_last_4_week':False,
-'plays_last_5_week':False,
-'collects_last_1_week':False,
-'collects_last_2_week':False,
-'collects_last_3_week':False,
-'collects_last_4_week':False,
-'collects_last_5_week':False,
-'n_songs':False,
-'gender':True,
-'n_languages':False,
-'mode_language':False,
-'avg_artist_song_plays_last_1_month':False,
-'std_artist_song_plays_last_1_month':False,
-'avg_artist_song_plays_last_2_month':False,
-'std_artist_song_plays_last_2_month':False,
-'offset_first_song':False,
-'offset_last_song':False,
-'avg_continuous_rise_10':False,
-'avg_continuous_maintain_10':False,
-'avg_continuous_decline_10':False,
-'avg_continuous_rise_10_days':False,
-'avg_continuous_maintain_10_days':False,
-'avg_continuous_decline_10_days':False,
-#'plays_last_1_day':False,
-'avg_plays_same_weekday':False,
-'avg_plays_same_day':False,
-'std_plays_same_weekday':False,
-'std_plays_same_day':False,
-'qoq_plays_last_1_week':False,
-'qoq_plays_last_2_week':False,
-'qoq_plays_last_3_week':False,
-'yoy_plays':False,
-#'trend_last_1_day':True,
-#'n_trend_days_last_1_day':False,
-}
+import numpy as np
+from sklearn.ensemble import RandomForestRegressor
 
-n_days = 61
-n_artists = 50
+TIME_FORMAT='%Y%m%d'
+N_SERIES_DAYS=15
+MIN_CORRELATION=0.0
+IS_CATEGORY=np.ones(10)
+BASE_MODEL=RandomForestRegressor

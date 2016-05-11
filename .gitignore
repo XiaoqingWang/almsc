@@ -66,3 +66,7 @@ data/
 
 # Doc
 doc/
+
+# dump
+src/model
+src/predict

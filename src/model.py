@@ -1,20 +1,14 @@
 import numpy as np
+from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import Imputer
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import StandardScaler
-from sklearn.feature_selection import RFE
-#from sklearn.feature_selection import SelectFromModel
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.svm import SVR
 from sklearn.pipeline import Pipeline
-from sklearn.grid_search import GridSearchCV
-from base import n_artists, n_days
-from extract import encoder_list
+from sklearn.externals.joblib import dump, load
+from base import BASE_MODEL
+from extract import getArtistIdList, get_n_artists, get_n_series, getFeatures, get_n_days
 
 def score(model, X, y):
     y = y.reshape(n_artists, n_days)
-    y_impute = Imputer(missing_values=0).fit_transform(y.T).T
     y_predict = model.predict(X).reshape(n_artists, n_days)
     std = np.sqrt(np.mean(np.power((y_predict - y) / y_impute, 2), axis=1))
     print '[std]', std
@@ -27,12 +21,55 @@ def score(model, X, y):
     return real_score, ideal_score
 
 def init():
-    step1 = ('OneHotEncoder', OneHotEncoder(sparse=False, handle_unknown='ignore',categorical_features = encoder_list()))
+    step1 = ('OneHotEncoder', OneHotEncoder(sparse=False, handle_unknown='ignore'))
     step2 = ('StandardScaler', StandardScaler())
-#    step3 = ('RFE', RFE(estimator=GradientBoostingRegressor(), n_features_to_select=10))
-#    step3 = ('SelectFromModel', SelectFromModel(GradientBoostingRegressor()))
-#    step4 = ('model', GradientBoostingRegressor())
-    step4 = ('model', GradientBoostingRegressor())
-    pipeline = Pipeline(steps=[step1, step2, step4])
-#    grid_search = GridSearchCV(pipeline, param_grid={'RFE__n_features_to_select':[20]})
-    return pipeline
+    step3 = ('model', BASE_MODEL())
+    pipeline = Pipeline(steps=[step1, step2, step3])
+    artistIdList = getArtistIdList()
+    n_artists = get_n_artists()
+    n_series = get_n_series()
+    for i in range(n_artists):
+        print '[init]', artistIdList[i], i
+        for j in range(n_series):
+#            print '[init]', artistIdList[i], i, j
+            dump(pipeline, 'model/%s_%d_%d' % (artistIdList[i], i, j), compress=3)
+
+def fit():
+    artistIdList = getArtistIdList()
+    n_artists = get_n_artists()
+    n_series = get_n_series()
+    for i in range(n_artists):
+        print '[fit]', artistIdList[i], i
+        for j in range(n_series):
+            pipeline = load('model/%s_%d_%d' % (artistIdList[i], i, j))
+            X, y, categoryIndexList = getFeatures(artistIdList[i], j ,isTrain=True)
+            pipeline.set_params(OneHotEncoder__categorical_features=categoryIndexList)
+            pipeline.fit(X, y)
+#            print '[fit]', artistIdList[i], i, j, pipeline.get_params()['model'].feature_importances_
+            dump(pipeline, 'model/%s_%d_%d' % (artistIdList[i], i, j), compress=3)
+
+def predict():
+    real_score = 0
+    ideal_score = 0
+    artistIdList = getArtistIdList()
+    n_artists = get_n_artists()
+    n_series = get_n_series()
+    n_y_days = get_n_days(isX=True, isTrain=False)
+    for i in range(n_artists):
+        sum_plays = 0
+        sum_var = 0
+        for j in range(n_series):
+#            print '[predict]', artistIdList[i], i, j
+            pipeline = load('model/%s_%d_%d' % (artistIdList[i], i, j))
+            X, y, categoryIndexList = getFeatures(artistIdList[i], j ,isTrain=False)
+            y_impute = Imputer(missing_values=0).fit_transform(y.reshape(-1,1)).flatten()
+            y_predict = pipeline.predict(X)
+#            dump(y_predict, 'predict/%s_%d_%d' % (artistIdList[i], i, j), compress=3)
+            sum_plays += np.sum(y)
+            sum_var += np.sum(np.power((y_predict - y) / y_impute, 2))
+        weight = np.sqrt(sum_plays)
+        std = np.sqrt(sum_var/n_y_days)
+        real_score += (1-std) * weight
+        ideal_score += weight
+        print '[predict]', artistIdList[i], i, weight, 1-std
+    print '[score]', real_score, ideal_score, real_score / ideal_score
