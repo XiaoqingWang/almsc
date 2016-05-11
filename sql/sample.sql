@@ -1,34 +1,32 @@
-set @begin_train:='20150501';
-set @end_train:='20150630';
-set @begin_test:='20150701';
-set @end_test:='20150830';
+set @begin_X_train:='20150301';
+set @end_X_train:='20150430';
+set @begin_y_train:='20150501';
+set @end_y_train:='20150630';
+set @begin_X_test:='20150501';
+set @end_X_test:='20150630';
+set @begin_y_test:='20150701';
+set @end_y_test:='20150830';
 
 --sample
-drop table if exists mars_tianchi_features;
-create table mars_tianchi_features
+drop table if exists mars_tianchi_samples;
+create table mars_tianchi_samples
 (
 artist_id char(32),
 ds char(8),
+is_X int, -- 1:X,0:y
+is_train int, --1:train,0:test
 plays int,
-is_train char(1), --1:train,0:test
-weight float,
-primary key(artist_id, ds)
+primary key(artist_id, ds, is_X, is_train)
 );
---train
-insert into mars_tianchi_features(artist_id, ds, is_train)
-select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, '1' as is_train from mars_tianchi_artists, mars_tianchi_ds
-where mars_tianchi_ds.ds between @begin_train and @end_train;
-update mars_tianchi_features set weight = sqrt((select sum(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.artist_id = mars_tianchi_features.artist_id and mars_tianchi_artist_actions.action_type = '1' and mars_tianchi_artist_actions.ds < @begin_train));
---test
-insert into mars_tianchi_features(artist_id, ds, is_train)
-select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, '0' as is_train from mars_tianchi_artists, mars_tianchi_ds
-where mars_tianchi_ds.ds between @begin_test and @end_test;
---all
-update mars_tianchi_features left join mars_tianchi_artist_actions
-on mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id
-and mars_tianchi_features.ds = mars_tianchi_artist_actions.ds
-and mars_tianchi_artist_actions.action_type = '1'
-set mars_tianchi_features.plays = mars_tianchi_artist_actions.n;
+insert into mars_tianchi_samples(artist_id, ds, is_X, is_train) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, '1' as is_X, '1' as is_train from mars_tianchi_artists, mars_tianchi_ds where mars_tianchi_ds.ds between @begin_X_train and @end_X_train;
+insert into mars_tianchi_samples(artist_id, ds, is_X, is_train) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, '0' as is_X, '1' as is_train from mars_tianchi_artists, mars_tianchi_ds where mars_tianchi_ds.ds between @begin_y_train and @end_y_train;
+insert into mars_tianchi_samples(artist_id, ds, is_X, is_train) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, '1' as is_X, '0' as is_train from mars_tianchi_artists, mars_tianchi_ds where mars_tianchi_ds.ds between @begin_X_test and @end_X_test;
+insert into mars_tianchi_samples(artist_id, ds, is_X, is_train) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, '0' as is_X, '0' as is_train from mars_tianchi_artists, mars_tianchi_ds where mars_tianchi_ds.ds between @begin_y_test and @end_y_test;
+update mars_tianchi_samples left join mars_tianchi_artist_actions on mars_tianchi_samples.artist_id = mars_tianchi_artist_actions.artist_id and mars_tianchi_samples.ds = mars_tianchi_artist_actions.ds and mars_tianchi_artist_actions.action_type = '1' set mars_tianchi_samples.plays = mars_tianchi_artist_actions.n;
+--select * from mars_tianchi_samples
+
+
+
 
 --delete abnormal artist
 select * 
