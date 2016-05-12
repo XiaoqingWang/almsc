@@ -46,6 +46,7 @@ primary key(artist_id, ds, action_type)
 insert into mars_tianchi_artist_actions 
 select mars_tianchi_song_actions.artist_id, mars_tianchi_song_actions.ds, mars_tianchi_song_actions.action_type, sum(n) as n from mars_tianchi_song_actions
 group by mars_tianchi_song_actions.artist_id, mars_tianchi_song_actions.ds, mars_tianchi_song_actions.action_type;
+--select max(n) from mars_tianchi_artist_actions
 
 --artist n_songs
 update mars_tianchi_artists set
@@ -122,3 +123,51 @@ primary key(artist_id, month, action_type)
 insert into mars_tianchi_artist_month_song_actions 
 select artist_id, month(ds) as month, action_type, sum(n), max(n), min(n), avg(n), std(n) from mars_tianchi_song_actions group by artist_id, month, action_type;
 
+--song user actions
+drop table if exists mars_tianchi_song_user_actions;
+create table mars_tianchi_song_user_actions
+(
+artist_id char(32),
+song_id char(32),
+user_id char(32),
+ds char(8),
+action_type char(1),
+n int,
+primary key(song_id, user_id, ds, action_type)
+);
+drop index mars_tianchi_song_user_actions_idx on mars_tianchi_song_user_actions;
+create index mars_tianchi_song_user_actions_idx on mars_tianchi_song_user_actions(artist_id);
+insert into mars_tianchi_song_user_actions 
+select mars_tianchi_songs.artist_id, mars_tianchi_songs.song_id, mars_tianchi_user_actions.user_id, mars_tianchi_user_actions.ds, mars_tianchi_user_actions.action_type, count(*) as n from mars_tianchi_songs, mars_tianchi_user_actions
+where mars_tianchi_songs.song_id = mars_tianchi_user_actions.song_id
+group by mars_tianchi_songs.artist_id, mars_tianchi_songs.song_id, mars_tianchi_user_actions.user_id, mars_tianchi_user_actions.ds, mars_tianchi_user_actions.action_type;
+
+--artist user actions
+drop table if exists mars_tianchi_artist_user_actions;
+create table mars_tianchi_artist_user_actions
+(
+artist_id char(32),
+user_id char(32),
+ds char(8),
+action_type char(1),
+n int,
+primary key(artist_id, user_id, ds, action_type)
+);
+insert into mars_tianchi_artist_user_actions 
+select mars_tianchi_song_user_actions.artist_id, mars_tianchi_song_user_actions.user_id, mars_tianchi_song_user_actions.ds, mars_tianchi_song_user_actions.action_type, sum(n) as n from mars_tianchi_song_user_actions
+group by mars_tianchi_song_user_actions.artist_id, mars_tianchi_song_user_actions.user_id, mars_tianchi_song_user_actions.ds, mars_tianchi_song_user_actions.action_type;
+
+--artist users
+drop table if exists mars_tianchi_artist_users;
+create table mars_tianchi_artist_users
+(
+artist_id char(32),
+ds char(8),
+action_type char(1),
+n int,
+primary key(artist_id, ds, action_type)
+);
+insert into mars_tianchi_artist_users 
+select artist_id, ds, action_type, count(*) from mars_tianchi_artist_user_actions
+group by artist_id, ds, action_type
+--select max(n) from mars_tianchi_artist_users
