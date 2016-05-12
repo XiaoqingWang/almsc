@@ -1,8 +1,61 @@
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.linear_model import LinearRegression
 
 TIME_FORMAT='%Y%m%d'
 N_SERIES_DAYS=15
-MIN_CORRELATION=0.0
-IS_CATEGORY=np.ones(10)
 BASE_MODEL=RandomForestRegressor
+FEATURES = {
+'artist_code':True,
+'n_songs':False,
+'gender':True,
+'n_languages':False,
+'mode_language':True,
+'plays_last_1_week':False,
+'plays_last_2_week':False,
+'plays_last_3_week':False,
+'plays_last_4_week':False,
+'plays_last_5_week':False,
+'plays':False,
+'month':True,
+'day':True,
+'season':True,
+'week':True,
+'weekday':True,
+'is_holiday':False,
+'n_holidays':False,
+'i_holidays':True,
+'is_good_voice':False,
+'is_music_festival':False,
+'avg_plays_last_3_days':False,
+'avg_plays_last_5_days':False,
+'avg_plays_last_7_days':False,
+'downloads':False,
+'avg_downloads_last_3_days':False,
+'avg_downloads_last_5_days':False,
+'avg_downloads_last_7_days':False,
+'collects':False,
+'avg_collects_last_3_days':False,
+'avg_collects_last_5_days':False,
+'avg_collects_last_7_days':False,
+'diff_plays':False,
+'diff_downloads':False,
+'diff_collects':False,
+'plays_div_plays_prev_1_days':False,
+'plays_div_plays_prev_2_days':False,
+'plays_div_plays_prev_4_days':False,
+'plays_div_plays_prev_6_days':False,
+'plays_div_downloads':False,
+'plays_div_downloads_last_3_days':False,
+'plays_div_downloads_last_5_days':False,
+'plays_div_downloads_last_7_days':False,
+'plays_div_collects':False,
+'plays_div_collects_last_3_days':False,
+'plays_div_collects_last_5_days':False,
+'plays_div_collects_last_7_days':False,
+'play_users':False,
+'avg_play_users_last_3_days':False,
+'avg_play_users_last_5_days':False,
+'avg_play_users_last_7_days':False
+}

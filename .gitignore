@@ -68,5 +68,4 @@ data/
 doc/
 
 # dump
-src/model
-src/predict
+src/dump
