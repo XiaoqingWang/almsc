@@ -1,3 +1,4 @@
+from sys import argv
 from datetime import datetime
 import numpy as np
 from matplotlib import pyplot as plt 
@@ -30,7 +31,7 @@ def showPredict(i_artists=0):
     plt.show()
 
 def main():
-    showPredict(i_artists=2)
+    showPredict(i_artists=int(argv[1]))
 
 if __name__ == '__main__':
     main()

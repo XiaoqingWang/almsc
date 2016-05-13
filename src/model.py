@@ -55,6 +55,6 @@ def predict():
     indexList = range(n_artists)
     indexList = sorted(indexList, key=lambda x:precision[x], reverse=True)
     for i in range(n_artists):
-        print '[predict] ARTIST_ID[%32s], WEIGHT[%12.4f], PRECISION[%12.4f]' % (artistIdList[indexList[i]*n_artists], weight[indexList[i]], precision[indexList[i]])
+        print '[predict] [%2d] ARTIST_ID[%32s], WEIGHT[%12.4f], PRECISION[%12.4f]' % (indexList[i]+1, artistIdList[indexList[i]*n_artists], weight[indexList[i]], precision[indexList[i]])
     print '[CONCLUTION]', realScore, idealScore, percenctScore
     return artistIdList, dsList, yReal, yPredict
