@@ -8,6 +8,8 @@ TIME_FORMAT='%Y%m%d'
 N_SERIES_DAYS=15
 #BASE_MODEL=RandomForestRegressor()
 BASE_MODEL=SVR(kernel='linear', C=0.05)
+RF_MODEL=SVR(kernel='linear', C=0.05)
+N_SELECTED_FEATURES=0
 FEATURES = {
 #artist
 'r_artist_code':True,
@@ -16,6 +18,8 @@ FEATURES = {
 'r_n_languages':False,
 'r_mode_language':True,
 'r_avg_plays':False,
+'r_std_plays':False,
+'r_cov_plays':False,
 'r_plays':False,
 'r_avg_plays_last_3_days':False,
 'r_avg_plays_last_5_days':False,
@@ -24,10 +28,10 @@ FEATURES = {
 'r_q3_plays_div_q2_plays':False,
 'r_q4_plays_div_q3_plays':False,
 #day
-'r_month':True,
-'r_day':True,
-'r_season':True,
-'r_week':True,
+#'r_month':True,
+#'r_day':True,
+#'r_season':True,
+#'r_week':True,
 'r_weekday':True,
 'r_is_holiday':False,
 'r_n_holidays':False,
