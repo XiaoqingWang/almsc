@@ -43,12 +43,12 @@ def predict():
     pipeline = load('dump/model')
     n_artists = get_n_artists()
     n_days = get_n_days(isX=False, isTrain=False)
-    y = y.reshape(n_artists, n_days)
-    yImpute = Imputer(missing_values=0).fit_transform(y.T).T
+    yReal = y.reshape(n_artists, n_days)
+    yImpute = Imputer(missing_values=0).fit_transform(yReal.T).T
     yPredict = pipeline.predict(X).reshape(n_artists, n_days)
-    std = np.sqrt(np.mean(np.power((yPredict - y) / yImpute, 2), axis=1))
+    std = np.sqrt(np.mean(np.power((yPredict - yReal) / yImpute, 2), axis=1))
     precision = 1 - std
-    weight = np.sqrt(np.sum(y, axis=1))
+    weight = np.sqrt(np.sum(yReal, axis=1))
     realScore =  np.dot(precision, weight)
     idealScore = np.sum(weight)
     percenctScore = realScore / idealScore
@@ -57,3 +57,4 @@ def predict():
     for i in range(n_artists):
         print '[predict] ARTIST_ID[%32s], WEIGHT[%12.4f], PRECISION[%12.4f]' % (artistIdList[indexList[i]*n_artists], weight[indexList[i]], precision[indexList[i]])
     print '[CONCLUTION]', realScore, idealScore, percenctScore
+    return artistIdList, dsList, yReal, yPredict
