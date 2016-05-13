@@ -28,7 +28,7 @@ def genFeatureDefination(name):
     n_y_days = get_n_days(isX=False, isTrain=True)
     n_artists = get_n_artists()
     n_series = get_n_series()
-    artistIdList, playsTrainList = getSeries('plays', begin=beginYTrain, end=endYTrain)
+    artistIdList, playsTrainList = getSeries('s_plays', begin=beginYTrain, end=endYTrain)
     artistIdList, valTrainList = getSeries(name, begin=beginXTrain, end=endXTrain)
     artistIdList, valTestList = getSeries(name, begin=beginXTest, end=endXTest)
 
@@ -106,6 +106,9 @@ def main():
 #    genFeatureDefination('s_avg_play_users_last_3_days')
 #    genFeatureDefination('s_avg_play_users_last_5_days')
 #    genFeatureDefination('s_avg_play_users_last_7_days')
+    genFeatureDefination('s_users')
+    genFeatureDefination('s_new_users')
+    genFeatureDefination('s_new_users_div_users')
 
 if __name__ == '__main__':
     main()

@@ -68,5 +68,8 @@ FEATURES = {
 's_play_users':False,
 's_avg_play_users_last_3_days':False,
 's_avg_play_users_last_5_days':False,
-'s_avg_play_users_last_7_days':False
+'s_avg_play_users_last_7_days':False,
+'s_users':False,
+'s_new_users':False,
+'s_new_users_div_users':False,
 }
