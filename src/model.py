@@ -23,7 +23,6 @@ def init():
 
 def fit():
     artistIdList, dsList, X, y = getFeatures(isTrain=True)
-    print '[X]', X[0]
     pipeline = load('dump/model')
     pipeline.fit(X, y)
     featureNameList = FEATURES.keys()
@@ -36,7 +35,7 @@ def fit():
     if coefList is not None:
         indexList = sorted(range(len(featureNameList)), key=lambda x:coefList[x], reverse=True)
         for index in indexList:
-            print '[fit] NAME[%40s], COEF[%.8f]' % (featureNameList[index], coefList[index])
+            print '[fit] NAME[%40s], COEF[%12.4f]' % (featureNameList[index], coefList[index])
     dump(pipeline, 'dump/model', compress=3)
 
 def predict():
@@ -45,16 +44,16 @@ def predict():
     n_artists = get_n_artists()
     n_days = get_n_days(isX=False, isTrain=False)
     y = y.reshape(n_artists, n_days)
-    y_impute = Imputer(missing_values=0).fit_transform(y.T).T
-    y_predict = pipeline.predict(X).reshape(n_artists, n_days)
-    std = np.sqrt(np.mean(np.power((y_predict - y) / y_impute, 2), axis=1))
-    print '[std]', std
+    yImpute = Imputer(missing_values=0).fit_transform(y.T).T
+    yPredict = pipeline.predict(X).reshape(n_artists, n_days)
+    std = np.sqrt(np.mean(np.power((yPredict - y) / yImpute, 2), axis=1))
+    precision = 1 - std
     weight = np.sqrt(np.sum(y, axis=1))
-    print '[weight]', weight
-    real_score =  np.dot(1-std, weight)
-    ideal_score = np.sum(weight)
-    print '[random_score]', np.dot(np.random.uniform(0, 1, size=n_artists), weight)
-    print '[average_score]', np.dot(np.ones(n_artists) / 2, weight)
-    print '[excellent_score]', np.dot(1-np.ones(n_artists)/10, weight)
-    print '[real_score]', real_score
-    print '[ideal_score]', ideal_score, real_score / ideal_score
+    realScore =  np.dot(precision, weight)
+    idealScore = np.sum(weight)
+    percenctScore = realScore / idealScore
+    indexList = range(n_artists)
+    indexList = sorted(indexList, key=lambda x:precision[x], reverse=True)
+    for i in range(n_artists):
+        print '[predict] ARTIST_ID[%32s], WEIGHT[%12.4f], PRECISION[%12.4f]' % (artistIdList[indexList[i]*n_artists], weight[indexList[i]], precision[indexList[i]])
+    print '[CONCLUTION]', realScore, idealScore, percenctScore
