@@ -14,7 +14,7 @@ artist_id char(32),
 ds char(8),
 primary key(artist_id, ds)
 );
-insert into mars_tianchi_features(artist_id, ds) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds from mars_tianchi_artists, mars_tianchi_ds;
+insert into mars_tianchi_features(artist_id, ds) select artist_id, ds from mars_tianchi_samples where is_X = 0;
 --select distinct(artist_code) from mars_tianchi_features
 -----------------------------------------------
 --time
@@ -86,9 +86,9 @@ alter table mars_tianchi_features add(r_plays float);
 alter table mars_tianchi_features add(r_avg_plays_last_3_days float);
 alter table mars_tianchi_features add(r_avg_plays_last_5_days float);
 alter table mars_tianchi_features add(r_avg_plays_last_7_days float);
-alter table mars_tianchi_features add (r_q2_plays_div_q1_plays int);
-alter table mars_tianchi_features add (r_q3_plays_div_q2_plays int);
-alter table mars_tianchi_features add (r_q4_plays_div_q3_plays int);
+alter table mars_tianchi_features add (r_q2_plays_div_q1_plays float);
+alter table mars_tianchi_features add (r_q3_plays_div_q2_plays float);
+alter table mars_tianchi_features add (r_q4_plays_div_q3_plays float);
 --all
 update mars_tianchi_features left join mars_tianchi_artists 
 on mars_tianchi_features.artist_id = mars_tianchi_artists.artist_id set 
