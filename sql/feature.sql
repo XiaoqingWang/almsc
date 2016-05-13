@@ -68,6 +68,8 @@ alter table mars_tianchi_features drop column r_gender;
 alter table mars_tianchi_features drop column r_n_languages;
 alter table mars_tianchi_features drop column r_mode_language;
 alter table mars_tianchi_features drop column r_avg_plays;
+alter table mars_tianchi_features drop column r_std_plays;
+alter table mars_tianchi_features drop column r_cov_plays;
 alter table mars_tianchi_features drop column r_plays;
 alter table mars_tianchi_features drop column r_avg_plays_last_3_days;
 alter table mars_tianchi_features drop column r_avg_plays_last_5_days;
@@ -82,6 +84,8 @@ alter table mars_tianchi_features add(r_gender int);
 alter table mars_tianchi_features add(r_n_languages int);
 alter table mars_tianchi_features add(r_mode_language int);
 alter table mars_tianchi_features add(r_avg_plays float);
+alter table mars_tianchi_features add(r_std_plays float);
+alter table mars_tianchi_features add(r_cov_plays float);
 alter table mars_tianchi_features add(r_plays float);
 alter table mars_tianchi_features add(r_avg_plays_last_3_days float);
 alter table mars_tianchi_features add(r_avg_plays_last_5_days float);
@@ -99,6 +103,9 @@ mars_tianchi_features.r_n_languages = mars_tianchi_artists.n_languages,
 mars_tianchi_features.r_mode_language = mars_tianchi_artists.mode_language;
 --train
 update mars_tianchi_features set mars_tianchi_features.r_avg_plays = ifnull((select avg(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and mars_tianchi_artist_actions.ds between @begin_X_train and @end_X_train), 0) where mars_tianchi_features.ds between @begin_y_train and @end_y_train;
+update mars_tianchi_features set mars_tianchi_features.r_std_plays = ifnull((select std(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and mars_tianchi_artist_actions.ds between @begin_X_train and @end_X_train), 0) where mars_tianchi_features.ds between @begin_y_train and @end_y_train;
+update mars_tianchi_features set mars_tianchi_features.r_cov_plays = ifnull((select std(n) / avg(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and mars_tianchi_artist_actions.ds between @begin_X_train and @end_X_train), 0) where mars_tianchi_features.ds between @begin_y_train and @end_y_train;
+
 update mars_tianchi_features set mars_tianchi_features.r_plays = ifnull((select n from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and mars_tianchi_artist_actions.ds = @end_X_train), 0) where mars_tianchi_features.ds between @begin_y_train and @end_y_train;
 update mars_tianchi_features set mars_tianchi_features.r_avg_plays_last_3_days = ifnull((select avg(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and datediff(@end_X_train, mars_tianchi_artist_actions.ds) between 0 and 2), 0) where mars_tianchi_features.ds between @begin_y_train and @end_y_train;
 update mars_tianchi_features set mars_tianchi_features.r_avg_plays_last_5_days = ifnull((select avg(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and datediff(@end_X_train, mars_tianchi_artist_actions.ds) between 0 and 4), 0) where mars_tianchi_features.ds between @begin_y_train and @end_y_train;
@@ -108,6 +115,9 @@ update mars_tianchi_features set mars_tianchi_features.r_q3_plays_div_q2_plays =
 update mars_tianchi_features set mars_tianchi_features.r_q4_plays_div_q3_plays = ifnull((select avg(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and datediff(@end_X_train, mars_tianchi_artist_actions.ds) between 45 and 59), 0) / ifnull((select avg(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and datediff(@end_X_train, mars_tianchi_artist_actions.ds) between 30 and 44), 0) where mars_tianchi_features.ds between @begin_y_train and @end_y_train;
 --test
 update mars_tianchi_features set mars_tianchi_features.r_avg_plays = ifnull((select avg(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and mars_tianchi_artist_actions.ds between @begin_X_test and @end_X_test), 0) where mars_tianchi_features.ds between @begin_y_test and @end_y_test;
+update mars_tianchi_features set mars_tianchi_features.r_std_plays = ifnull((select std(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and mars_tianchi_artist_actions.ds between @begin_X_test and @end_X_test), 0) where mars_tianchi_features.ds between @begin_y_test and @end_y_test;
+update mars_tianchi_features set mars_tianchi_features.r_cov_plays = ifnull((select std(n) / avg(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and mars_tianchi_artist_actions.ds between @begin_X_test and @end_X_test), 0) where mars_tianchi_features.ds between @begin_y_test and @end_y_test;
+
 update mars_tianchi_features set mars_tianchi_features.r_plays = ifnull((select n from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and mars_tianchi_artist_actions.ds = @end_X_test), 0) where mars_tianchi_features.ds between @begin_y_test and @end_y_test;
 update mars_tianchi_features set mars_tianchi_features.r_avg_plays_last_3_days = ifnull((select avg(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and datediff(@end_X_test, mars_tianchi_artist_actions.ds) between 0 and 2), 0) where mars_tianchi_features.ds between @begin_y_test and @end_y_test;
 update mars_tianchi_features set mars_tianchi_features.r_avg_plays_last_5_days = ifnull((select avg(n) from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type='1' and mars_tianchi_features.artist_id = mars_tianchi_artist_actions.artist_id and datediff(@end_X_test, mars_tianchi_artist_actions.ds) between 0 and 4), 0) where mars_tianchi_features.ds between @begin_y_test and @end_y_test;
