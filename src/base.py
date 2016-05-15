@@ -19,7 +19,7 @@ FEATURES = {
 'r_mode_language':True,
 'r_avg_plays':False,
 'r_std_plays':False,
-'r_cov_plays':False,
+#'r_cov_plays':False,
 'r_plays':False,
 'r_avg_plays_last_3_days':False,
 'r_avg_plays_last_5_days':False,
@@ -27,6 +27,11 @@ FEATURES = {
 'r_q2_plays_div_q1_plays':False,
 'r_q3_plays_div_q2_plays':False,
 'r_q4_plays_div_q3_plays':False,
+#'r_sum_plays':False,
+#'r_sum_downloads':False,
+#'r_sum_collects':False,
+#'r_sum_downloads_div_sum_plays':False,
+#'r_sum_collects_div_sum_plays':False,
 #day
 'r_month':True,
 'r_day':True,
@@ -76,4 +81,7 @@ FEATURES = {
 's_users':False,
 's_new_users':False,
 's_new_users_div_users':False,
+'s_diff_users':False,
+'s_new_plays':False,
+'s_new_plays_div_plays':False,
 }
