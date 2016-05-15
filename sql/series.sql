@@ -144,8 +144,19 @@ update mars_tianchi_series set mars_tianchi_series.val = ifnull((select sum(n) f
 delete from mars_tianchi_series where name = 's_new_users_div_users';
 insert into mars_tianchi_series(artist_id, ds, name) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, 's_new_users_div_users' as name from mars_tianchi_artists, mars_tianchi_ds;
 update mars_tianchi_series set mars_tianchi_series.val = ifnull((select sum(n) from mars_tianchi_artist_new_users where mars_tianchi_artist_new_users.artist_id = mars_tianchi_series.artist_id and mars_tianchi_artist_new_users.ds = mars_tianchi_series.ds), 0) / (ifnull((select sum(n) from mars_tianchi_artist_users where mars_tianchi_artist_users.artist_id = mars_tianchi_series.artist_id and mars_tianchi_artist_users.ds = mars_tianchi_series.ds), 0) + 1) where mars_tianchi_series.name = 's_new_users_div_users';
-
-
+-----------------------------------------------
+delete from mars_tianchi_series where name = 's_diff_users';
+insert into mars_tianchi_series(artist_id, ds, name) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, 's_diff_users' as name from mars_tianchi_artists, mars_tianchi_ds;
+update mars_tianchi_series set mars_tianchi_series.val = ifnull((select sum(n) from mars_tianchi_artist_users where mars_tianchi_series.artist_id = mars_tianchi_artist_users.artist_id and mars_tianchi_series.ds = mars_tianchi_artist_users.ds), 0) - ifnull((select sum(n) from mars_tianchi_artist_users where mars_tianchi_series.artist_id = mars_tianchi_artist_users.artist_id and datediff(mars_tianchi_series.ds, mars_tianchi_artist_users.ds) = 1), 0) where mars_tianchi_series.name = 's_diff_users';
+-----------------------------------------------
+delete from mars_tianchi_series where name = 's_new_plays';
+insert into mars_tianchi_series(artist_id, ds, name) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, 's_new_plays' as name from mars_tianchi_artists, mars_tianchi_ds;
+update mars_tianchi_series set mars_tianchi_series.val = ifnull((select n from mars_tianchi_artist_new_actions where mars_tianchi_artist_new_actions.action_type = '1' and mars_tianchi_artist_new_actions.artist_id = mars_tianchi_series.artist_id and mars_tianchi_artist_new_actions.ds = mars_tianchi_series.ds), 0) where mars_tianchi_series.name = 's_new_plays';
+-----------------------------------------------
+delete from mars_tianchi_series where name = 's_new_plays_div_plays';
+insert into mars_tianchi_series(artist_id, ds, name) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, 's_new_plays_div_plays' as name from mars_tianchi_artists, mars_tianchi_ds;
+update mars_tianchi_series set mars_tianchi_series.val = ifnull((select n from mars_tianchi_artist_new_actions where mars_tianchi_artist_new_actions.action_type = '1' and mars_tianchi_artist_new_actions.artist_id = mars_tianchi_series.artist_id and mars_tianchi_artist_new_actions.ds = mars_tianchi_series.ds), 0) / (ifnull((select n from mars_tianchi_artist_actions where mars_tianchi_artist_actions.action_type = '1' and mars_tianchi_artist_actions.artist_id = mars_tianchi_series.artist_id and mars_tianchi_artist_actions.ds = mars_tianchi_series.ds), 0) + 1) where mars_tianchi_series.name = 's_new_plays_div_plays';
+-----------------------------------------------
 
 
 

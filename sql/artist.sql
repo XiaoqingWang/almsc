@@ -188,3 +188,20 @@ where not exists (select 1 from mars_tianchi_artist_user_actions t2
 where t2.artist_id = t1.artist_id and t2.action_type = t1.action_type
 and t2.ds < t1.ds)
 group by artist_id, ds, action_type;
+
+--artist new actions
+drop table if exists mars_tianchi_artist_new_actions;
+create table mars_tianchi_artist_new_actions
+(
+artist_id char(32),
+ds char(8),
+action_type char(1),
+n int,
+primary key(artist_id, ds, action_type)
+);
+insert into mars_tianchi_artist_new_actions 
+select artist_id, ds, action_type, sum(n) from mars_tianchi_song_user_actions t1
+where not exists (select 1 from mars_tianchi_song_user_actions t2
+where t2.artist_id = t1.artist_id and t2.action_type = t1.action_type
+and t2.ds < t1.ds)
+group by artist_id, ds, action_type;
