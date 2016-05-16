@@ -15,7 +15,7 @@ ds char(8),
 primary key(artist_id, ds)
 );
 insert into mars_tianchi_features(artist_id, ds) select artist_id, ds from mars_tianchi_samples where is_X = 0;
---select distinct(artist_code) from mars_tianchi_features
+--select distinct(artist_id) from mars_tianchi_features;
 -----------------------------------------------
 --time
 --drop column
@@ -101,8 +101,8 @@ alter table mars_tianchi_features add (r_q4_plays_div_q3_plays float);
 alter table mars_tianchi_features add (r_sum_plays int);
 alter table mars_tianchi_features add (r_sum_downloads int);
 alter table mars_tianchi_features add (r_sum_collects int);
-alter table mars_tianchi_features add (r_sum_downloads_div_sum_plays int);
-alter table mars_tianchi_features add (r_sum_collects_div_sum_plays int);
+alter table mars_tianchi_features add (r_sum_downloads_div_sum_plays float);
+alter table mars_tianchi_features add (r_sum_collects_div_sum_plays float);
 --all
 update mars_tianchi_features left join mars_tianchi_artists 
 on mars_tianchi_features.artist_id = mars_tianchi_artists.artist_id set 

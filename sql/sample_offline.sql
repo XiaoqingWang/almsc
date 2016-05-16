@@ -1,6 +1,7 @@
---20150302 is ignored
+--20150301 is ignored
 set @begin_X_train:='20150302';
 set @end_X_train:='20150430';
+--20150501 is ignored
 set @begin_y_train:='20150502';
 set @end_y_train:='20150630';
 --20150501 is ignored

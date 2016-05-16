@@ -186,6 +186,7 @@ insert into mars_tianchi_artist_new_users
 select artist_id, ds, action_type, count(*) from mars_tianchi_artist_user_actions t1
 where not exists (select 1 from mars_tianchi_artist_user_actions t2
 where t2.artist_id = t1.artist_id and t2.action_type = t1.action_type
+and t2.user_id = t1.user_id
 and t2.ds < t1.ds)
 group by artist_id, ds, action_type;
 
@@ -203,5 +204,7 @@ insert into mars_tianchi_artist_new_actions
 select artist_id, ds, action_type, sum(n) from mars_tianchi_song_user_actions t1
 where not exists (select 1 from mars_tianchi_song_user_actions t2
 where t2.artist_id = t1.artist_id and t2.action_type = t1.action_type
+and t2.song_id = t1.song_id
+and t2.user_id = t1.user_id
 and t2.ds < t1.ds)
 group by artist_id, ds, action_type;
