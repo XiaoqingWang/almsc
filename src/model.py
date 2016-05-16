@@ -70,23 +70,28 @@ def fit():
             print '[fit] NAME[%40s], COEF[%12.4f]' % (selectedFeatureNameList[index], coefList[index])
     dump(pipeline, 'dump/model', compress=3)
 
-def predict():
+def predict(isOffline=True):
     artistIdList, dsList, X, y = getFeatures(isTrain=False)
     pipeline = load('dump/model')
     n_artists = get_n_artists()
     n_days = get_n_days(isX=False, isTrain=False)
-    yReal = y.reshape(n_artists, n_days)
-    yImpute = Imputer(missing_values=0).fit_transform(yReal.T).T
-    yPredict = pipeline.predict(X).reshape(n_artists, n_days)
-    std = np.sqrt(np.mean(np.power((yPredict - yReal) / yImpute, 2), axis=1))
-    precision = 1 - std
-    weight = np.sqrt(np.sum(yReal, axis=1))
-    realScore =  np.dot(precision, weight)
-    idealScore = np.sum(weight)
-    percenctScore = realScore / idealScore
-    indexList = range(n_artists)
-    indexList = sorted(indexList, key=lambda x:precision[x], reverse=True)
-    for i in range(n_artists):
-        print '[predict] [%2d] ARTIST_ID[%32s], WEIGHT[%12.4f], PRECISION[%12.4f]' % (indexList[i]+1, artistIdList[indexList[i]*n_days], weight[indexList[i]], precision[indexList[i]])
-    print '[CONCLUTION]', realScore, idealScore, percenctScore
-    return artistIdList, dsList, yReal, yPredict
+    yPredictRaw = pipeline.predict(X)
+    if isOffline:
+        yPredict = yPredictRaw.reshape(n_artists, n_days)
+        yReal = y.reshape(n_artists, n_days)
+        yImpute = Imputer(missing_values=0).fit_transform(yReal.T).T
+        std = np.sqrt(np.mean(np.power((yPredict - yReal) / yImpute, 2), axis=1))
+        precision = 1 - std
+        weight = np.sqrt(np.sum(yReal, axis=1))
+        realScore =  np.dot(precision, weight)
+        idealScore = np.sum(weight)
+        percenctScore = realScore / idealScore
+        indexList = range(n_artists)
+        indexList = sorted(indexList, key=lambda x:precision[x], reverse=True)
+        for i in range(n_artists):
+            print '[predict] [%2d] ARTIST_ID[%32s], WEIGHT[%12.4f], PRECISION[%12.4f]' % (indexList[i]+1, artistIdList[indexList[i]*n_days], weight[indexList[i]], precision[indexList[i]])
+        print '[CONCLUTION]', realScore, idealScore, percenctScore
+        return artistIdList, dsList, yReal, yPredict
+    else:
+        result = np.hstack((artistIdList.reshape(-1,1), yPredictRaw.reshape(-1,1), dsList.reshape(-1,1)))
+        np.savetxt('../data/mars_tianchi_artist_plays_predict.csv', result, fmt='%s', delimiter=',')

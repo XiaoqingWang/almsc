@@ -3,7 +3,7 @@ from datetime import datetime
 import numpy as np
 from matplotlib import pyplot as plt 
 from matplotlib.dates import date2num
-from model import predict
+from base import ISOFFLINE
 from extract import get_n_artists, get_n_days, getPlays
 from model import predict
 
@@ -11,7 +11,7 @@ def showPredict(i_artists=0):
     n_artists = get_n_artists()
     assert(i_artists in range(n_artists+1))
     n_days = get_n_days(isX=False, isTrain=False)
-    artistIdList, dsList, yReal, yPredict = predict()
+    artistIdList, dsList, yReal, yPredict = predict(isOffline=ISOFFLINE)
     yTrain = getPlays(isTrain=True)
     yTrain = yTrain.reshape(n_artists, n_days)
 
