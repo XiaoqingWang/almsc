@@ -4,6 +4,16 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.svm import SVR
 
+ISOFFLINE = True
+HOST = 'almsc'
+USER = 'root'
+PASSWORD = 'Almsc@2016'
+if ISOFFLINE:
+    print '[-------------------------O F F L I N E-------------------------]'
+    DATABASE = 'almsc_offline'
+else:
+    print '[--------------------------O N L I N E--------------------------]'
+    DATABASE = 'almsc_online'
 TIME_FORMAT='%Y%m%d'
 N_SERIES_DAYS=15
 #BASE_MODEL=RandomForestRegressor()
