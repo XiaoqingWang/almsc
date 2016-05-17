@@ -3,6 +3,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.svm import LinearSVR
+from sklearn.tree import DecisionTreeRegressor
 ISOFFLINE = True
 HOST = 'almsc'
 USER = 'root'
@@ -16,6 +17,7 @@ else:
 TIME_FORMAT='%Y%m%d'
 N_SERIES_DAYS=15
 BASE_MODEL=LinearSVR()
+#BASE_MODEL=DecisionTreeRegressor()
 #BASE_MODEL=RandomForestRegressor()
 #BASE_MODEL=GradientBoostingRegressor()
 if isinstance(BASE_MODEL, LinearSVR):
@@ -32,6 +34,9 @@ elif isinstance(BASE_MODEL, RandomForestRegressor):
 elif isinstance(BASE_MODEL, GradientBoostingRegressor):
     GRIDPARAMS = {
     }
+elif isinstance(BASE_MODEL, DecisionTreeRegressor):
+    GRIDPARAMS = {
+    }
 else:
     raise Exception('unkown model[%s]' % BASE_MODEL)
 RF_MODEL=LinearSVR(C=0.05)
@@ -44,8 +49,8 @@ FEATURES = {
 'r_n_languages':False,
 'r_mode_language':True,
 'r_avg_plays':False,
-#'r_std_plays':False,
-#'r_cov_plays':False,
+'r_std_plays':False,
+'r_cov_plays':False,
 'r_plays':False,
 'r_avg_plays_last_3_days':False,
 'r_avg_plays_last_5_days':False,
@@ -58,6 +63,12 @@ FEATURES = {
 'r_sum_collects':False,
 'r_sum_downloads_div_sum_plays':False,
 'r_sum_collects_div_sum_plays':False,
+#'r_q2_div_q1_mul_avg_plays':False,
+#'r_q3_div_q2_mul_avg_plays':False,
+#'r_q4_div_q3_mul_avg_plays':False,
+#'r_q2_div_q1_mul_plays':False,
+#'r_q3_div_q2_mul_plays':False,
+#'r_q4_div_q3_mul_plays':False,
 #'r_q3_q2_q1_acceleration':False,
 #'r_q4_q3_q2_acceleration':False,
 #'r_normal_q2_plays_diff_q1_plays':False,
