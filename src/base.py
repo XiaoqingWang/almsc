@@ -53,6 +53,8 @@ FEATURES = {
 'r_sum_collects':False,
 'r_sum_downloads_div_sum_plays':False,
 'r_sum_collects_div_sum_plays':False,
+'r_q3_q2_q1_acceleration':False,
+'r_q4_q3_q2_acceleration':False,
 #day
 'r_month':True,
 'r_day':True,

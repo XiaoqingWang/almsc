@@ -78,7 +78,9 @@ def predict(isOffline=True):
     pipeline = load('dump/model')
     n_artists = get_n_artists()
     n_days = get_n_days(isX=False, isTrain=False)
-    yPredictRaw = np.round(pipeline.predict(X)).astype('int64')
+    yPredictRaw = pipeline.predict(X)
+    yPredictRaw[yPredictRaw < 0] = 0
+    yPredictRaw = np.round(yPredictRaw).astype('int64')
     if isOffline:
         yPredict = yPredictRaw.reshape(n_artists, n_days)
         yReal = y.reshape(n_artists, n_days)
