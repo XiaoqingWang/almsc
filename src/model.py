@@ -4,8 +4,9 @@ from sklearn.preprocessing import Imputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.feature_selection import RFE
 from sklearn.pipeline import Pipeline
+from sklearn.grid_search import GridSearchCV
 from sklearn.externals.joblib import dump, load
-from base import BASE_MODEL, FEATURES, RF_MODEL, N_SELECTED_FEATURES
+from base import BASE_MODEL, FEATURES, RF_MODEL, N_SELECTED_FEATURES, GRIDPARAMS
 from extract import getArtistIdList, get_n_artists, get_n_series, getFeatures, get_n_days
 
 def _getEncoderList(boolList):
@@ -51,19 +52,21 @@ def init():
 def fit():
     artistIdList, dsList, X, y = getFeatures(isTrain=True)
     pipeline = load('dump/model')
-    pipeline.fit(X, y)
-    coder = pipeline.get_params()['OneHotEncoder']
+    search = GridSearchCV(pipeline, GRIDPARAMS)
+    search.fit(X, y)
+    pipeline = search.best_estimator_
+    coder = pipeline.named_steps['OneHotEncoder']
     encodedFeatureNameList = _getEncodedFeatureNameList(FEATURES.keys(), FEATURES.values(), coder.active_features_, coder.feature_indices_)
     if N_SELECTED_FEATURES > 0:
-        selectedFeatureNameList = _getSelectedFeatureNameList(encodedFeatureNameList, pipeline.get_params()['RFE'].support_)
+        selectedFeatureNameList = _getSelectedFeatureNameList(encodedFeatureNameList, pipeline.named_steps['RFE'].support_)
     else:
         selectedFeatureNameList = encodedFeatureNameList
-    model = pipeline.get_params()['model']
+    model = pipeline.named_steps['model']
     coefList = None
     if hasattr(model, 'feature_importances_'):
         coefList = model.feature_importances_
     elif hasattr(model, 'coef_'):
-        coefList = model.coef_[0]
+        coefList = model.coef_
     if coefList is not None:
         indexList = sorted(range(len(selectedFeatureNameList)), key=lambda x:coefList[x], reverse=True)
         for index in indexList:
@@ -75,7 +78,7 @@ def predict(isOffline=True):
     pipeline = load('dump/model')
     n_artists = get_n_artists()
     n_days = get_n_days(isX=False, isTrain=False)
-    yPredictRaw = pipeline.predict(X)
+    yPredictRaw = np.round(pipeline.predict(X)).astype('int64')
     if isOffline:
         yPredict = yPredictRaw.reshape(n_artists, n_days)
         yReal = y.reshape(n_artists, n_days)
@@ -90,6 +93,7 @@ def predict(isOffline=True):
         indexList = sorted(indexList, key=lambda x:precision[x], reverse=True)
         for i in range(n_artists):
             print '[predict] [%2d] ARTIST_ID[%32s], WEIGHT[%12.4f], PRECISION[%12.4f]' % (indexList[i]+1, artistIdList[indexList[i]*n_days], weight[indexList[i]], precision[indexList[i]])
+        print '[PARAMS]', pipeline.named_steps['model'].get_params()
         print '[CONCLUTION]', realScore, idealScore, percenctScore
         return artistIdList, dsList, yReal, yPredict
     else:

@@ -2,8 +2,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.linear_model import LinearRegression
-from sklearn.svm import SVR
-
+from sklearn.svm import LinearSVR
 ISOFFLINE = True
 HOST = 'almsc'
 USER = 'root'
@@ -17,8 +16,20 @@ else:
 TIME_FORMAT='%Y%m%d'
 N_SERIES_DAYS=15
 #BASE_MODEL=RandomForestRegressor()
-BASE_MODEL=SVR(kernel='linear', C=0.05)
-RF_MODEL=SVR(kernel='linear', C=0.05)
+BASE_MODEL=LinearSVR()
+if isinstance(BASE_MODEL, LinearSVR):
+    GRIDPARAMS = {
+    'model__C':np.arange(1, 20).astype('float64') / 20,
+    }
+elif isinstance(BASE_MODEL, RandomForestRegressor):
+    GRIDPARAMS = {
+    'model__n_estimators':np.arange(1, 20),
+    'model__min_samples_split':np.arange(2, 51), 
+    'model__min_samples_leaf':np.arange(1, 51),
+    }
+else:
+    raise Exception('unkown model[%s]' % BASE_MODEL)
+RF_MODEL=LinearSVR(C=0.05)
 N_SELECTED_FEATURES=0
 FEATURES = {
 #artist
@@ -29,7 +40,7 @@ FEATURES = {
 'r_mode_language':True,
 'r_avg_plays':False,
 'r_std_plays':False,
-#'r_cov_plays':False,
+'r_cov_plays':False,
 'r_plays':False,
 'r_avg_plays_last_3_days':False,
 'r_avg_plays_last_5_days':False,
@@ -37,11 +48,11 @@ FEATURES = {
 'r_q2_plays_div_q1_plays':False,
 'r_q3_plays_div_q2_plays':False,
 'r_q4_plays_div_q3_plays':False,
-#'r_sum_plays':False,
-#'r_sum_downloads':False,
-#'r_sum_collects':False,
-#'r_sum_downloads_div_sum_plays':False,
-#'r_sum_collects_div_sum_plays':False,
+'r_sum_plays':False,
+'r_sum_downloads':False,
+'r_sum_collects':False,
+'r_sum_downloads_div_sum_plays':False,
+'r_sum_collects_div_sum_plays':False,
 #day
 'r_month':True,
 'r_day':True,

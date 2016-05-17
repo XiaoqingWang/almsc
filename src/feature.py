@@ -75,7 +75,7 @@ def genFeatureDefination(name):
     db.close()
 
 def main():
-    genFeatureDefination('s_plays')
+#    genFeatureDefination('s_plays')
 #    genFeatureDefination('s_avg_plays_last_3_days')
 #    genFeatureDefination('s_avg_plays_last_5_days')
 #    genFeatureDefination('s_avg_plays_last_7_days')
