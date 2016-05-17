@@ -15,12 +15,13 @@ else:
     DATABASE = 'almsc_online'
 TIME_FORMAT='%Y%m%d'
 N_SERIES_DAYS=15
-#BASE_MODEL=RandomForestRegressor()
 BASE_MODEL=LinearSVR()
+#BASE_MODEL=RandomForestRegressor()
+#BASE_MODEL=GradientBoostingRegressor()
 if isinstance(BASE_MODEL, LinearSVR):
     GRIDPARAMS = {
-    'model__C':np.arange(1, 20).astype('float64') / 20,
-#    'model__C':[0.123],
+#    'model__C':np.arange(1, 20).astype('float64') / 20,
+    'model__C':[0.18],
     }
 elif isinstance(BASE_MODEL, RandomForestRegressor):
     GRIDPARAMS = {
@@ -28,13 +29,16 @@ elif isinstance(BASE_MODEL, RandomForestRegressor):
     'model__min_samples_split':np.arange(2, 51), 
     'model__min_samples_leaf':np.arange(1, 51),
     }
+elif isinstance(BASE_MODEL, GradientBoostingRegressor):
+    GRIDPARAMS = {
+    }
 else:
     raise Exception('unkown model[%s]' % BASE_MODEL)
 RF_MODEL=LinearSVR(C=0.05)
 N_SELECTED_FEATURES=0
 FEATURES = {
 #artist
-'r_artist_code':True,
+#'r_artist_code':True,
 'r_n_songs':False,
 'r_gender':True,
 'r_n_languages':False,
