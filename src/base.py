@@ -16,19 +16,19 @@ else:
     DATABASE = 'almsc_online'
 TIME_FORMAT='%Y%m%d'
 N_SERIES_DAYS=15
-#BASE_MODEL=LinearSVR()
+BASE_MODEL=LinearSVR()
 #BASE_MODEL=DecisionTreeRegressor()
-BASE_MODEL=RandomForestRegressor()
+#BASE_MODEL=RandomForestRegressor()
 #BASE_MODEL=GradientBoostingRegressor()
 if isinstance(BASE_MODEL, LinearSVR):
     GRIDPARAMS = {
-#    'model__C':np.arange(1, 20).astype('float64') / 20,
-    'model__C':[0.18],
+    'model__C':np.arange(1, 20).astype('float64') / 20,
+#    'model__C':[0.18],
     }
 elif isinstance(BASE_MODEL, RandomForestRegressor):
     GRIDPARAMS = {
 #    'model__n_estimators':np.arange(1, 20),
-    'model__n_estimators':[100],
+    'model__n_estimators':[20],
 #    'model__min_samples_split':np.arange(2, 51), 
 #    'model__min_samples_leaf':np.arange(1, 51),
     }
@@ -76,10 +76,10 @@ FEATURES = {
 'r_normal_q3_plays_diff_q2_plays':False,
 'r_normal_q4_plays_diff_q3_plays':False,
 #day
-#'r_month':True,
+'r_month':True,
 'r_day':True,
-#'r_season':True,
-#'r_week':True,
+'r_season':True,
+'r_week':True,
 'r_weekday':True,
 'r_is_holiday':False,
 'r_n_holidays':False,
