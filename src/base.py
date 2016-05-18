@@ -23,12 +23,13 @@ BASE_MODEL=LinearSVR()
 if isinstance(BASE_MODEL, LinearSVR):
     GRIDPARAMS = {
     'model__C':np.arange(1, 20).astype('float64') / 20,
+    'model__epsilon':np.arange(1, 10).astype('float64') / 10,
 #    'model__C':[0.18],
     }
 elif isinstance(BASE_MODEL, RandomForestRegressor):
     GRIDPARAMS = {
 #    'model__n_estimators':np.arange(1, 20),
-    'model__n_estimators':[20],
+    'model__n_estimators':[100],
 #    'model__min_samples_split':np.arange(2, 51), 
 #    'model__min_samples_leaf':np.arange(1, 51),
     }
@@ -59,11 +60,11 @@ FEATURES = {
 #'r_q2_plays_div_q1_plays':False,
 #'r_q3_plays_div_q2_plays':False,
 #'r_q4_plays_div_q3_plays':False,
-'r_sum_plays':False,
-'r_sum_downloads':False,
-'r_sum_collects':False,
-'r_sum_downloads_div_sum_plays':False,
-'r_sum_collects_div_sum_plays':False,
+#'r_sum_plays':False,
+#'r_sum_downloads':False,
+#'r_sum_collects':False,
+#'r_sum_downloads_div_sum_plays':False,
+#'r_sum_collects_div_sum_plays':False,
 #'r_q2_div_q1_mul_avg_plays':False,
 #'r_q3_div_q2_mul_avg_plays':False,
 #'r_q4_div_q3_mul_avg_plays':False,
@@ -75,9 +76,10 @@ FEATURES = {
 'r_normal_q2_plays_diff_q1_plays':False,
 'r_normal_q3_plays_diff_q2_plays':False,
 'r_normal_q4_plays_diff_q3_plays':False,
+'r_mid_plays':False,
 #day
 #'r_month':True,
-#'r_day':True,
+'r_day':True,
 #'r_season':True,
 #'r_week':True,
 'r_weekday':True,

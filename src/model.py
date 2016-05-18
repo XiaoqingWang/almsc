@@ -71,6 +71,7 @@ def fit():
         indexList = sorted(range(len(selectedFeatureNameList)), key=lambda x:coefList[x], reverse=True)
         for index in indexList:
             print '[fit] NAME[%40s], COEF[%12.4f]' % (selectedFeatureNameList[index], coefList[index])
+    print '[PARAMS]', pipeline.named_steps['model'].get_params()
     dump(pipeline, 'dump/model', compress=3)
 
 def predict(isOffline=True):
@@ -95,7 +96,6 @@ def predict(isOffline=True):
         indexList = sorted(indexList, key=lambda x:precision[x], reverse=True)
         for i in range(n_artists):
             print '[predict] [%2d] ARTIST_ID[%32s], WEIGHT[%12.4f], PRECISION[%12.4f]' % (indexList[i]+1, artistIdList[indexList[i]*n_days], weight[indexList[i]], precision[indexList[i]])
-        print '[PARAMS]', pipeline.named_steps['model'].get_params()
         print '[CONCLUTION]', realScore, idealScore, percenctScore
         return artistIdList, dsList, yReal, yPredict
     else:
