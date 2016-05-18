@@ -49,7 +49,7 @@ FEATURES = {
 'r_gender':True,
 'r_n_languages':False,
 'r_mode_language':True,
-'r_avg_plays':False,
+#'r_avg_plays':False,
 #'r_std_plays':False,
 #'r_cov_plays':False,
 'r_plays':False,
