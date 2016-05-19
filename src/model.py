@@ -89,9 +89,9 @@ def predict(isOffline=True):
         std = np.sqrt(np.mean(np.power((yPredict - yReal) / yImpute, 2), axis=1))
         precision = 1 - std
         weight = np.sqrt(np.sum(yReal, axis=1))
-        realScore =  np.dot(precision, weight)
-        idealScore = np.sum(weight)
-        percenctScore = realScore / idealScore
+        realScore =  np.round(np.dot(precision, weight)).astype('int64')
+        idealScore = np.round(np.sum(weight)).astype('int64')
+        percenctScore = realScore * 1.0 / idealScore
         indexList = range(n_artists)
         indexList = sorted(indexList, key=lambda x:precision[x], reverse=True)
         for i in range(n_artists):
