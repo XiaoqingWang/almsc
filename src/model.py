@@ -70,7 +70,7 @@ def fit():
     if coefList is not None:
         indexList = sorted(range(len(selectedFeatureNameList)), key=lambda x:coefList[x], reverse=True)
         for index in indexList:
-            print '[fit] NAME[%40s], COEF[%12.4f]' % (selectedFeatureNameList[index], coefList[index])
+            print '[fit] NAME[%60s], COEF[%12.4f]' % (selectedFeatureNameList[index], coefList[index])
     print '[PARAMS]', pipeline.named_steps['model'].get_params()
     dump(pipeline, 'dump/model', compress=3)
 

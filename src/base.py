@@ -24,7 +24,7 @@ if isinstance(BASE_MODEL, LinearSVR):
     GRIDPARAMS = {
     'model__C':np.arange(1, 20).astype('float64') / 20,
     'model__epsilon':np.arange(1, 10).astype('float64') / 10,
-#    'model__C':[0.18],
+#    'model__C':[0.6],
     }
 elif isinstance(BASE_MODEL, RandomForestRegressor):
     GRIDPARAMS = {
@@ -129,4 +129,21 @@ FEATURES = {
 's_diff_users':False,
 's_new_plays':False,
 's_new_plays_div_plays':False,
+'s_download_users':False,
+'s_avg_download_users_last_3_days':False,
+'s_avg_download_users_last_5_days':False,
+'s_avg_download_users_last_7_days':False,
+'s_collect_users':False,
+'s_avg_collect_users_last_3_days':False,
+'s_avg_collect_users_last_5_days':False,
+'s_avg_collect_users_last_7_days':False,
+'s_download_users_div_play_users':False,
+'s_download_users_div_play_users_last_3_days':False,
+'s_download_users_div_play_users_last_5_days':False,
+'s_download_users_div_play_users_last_7_days':False,
+'s_collect_users_div_play_users':False,
+'s_collect_users_div_play_users_last_3_days':False,
+'s_collect_users_div_play_users_last_5_days':False,
+'s_collect_users_div_play_users_last_7_days':False,
+'s_cov_user_plays':False,
 }
