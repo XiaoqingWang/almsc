@@ -16,6 +16,7 @@ else:
     DATABASE = 'almsc_online'
 TIME_FORMAT='%Y%m%d'
 N_SERIES_DAYS=15
+DECAY_RATE=0.99
 BASE_MODEL=LinearSVR()
 #BASE_MODEL=DecisionTreeRegressor()
 #BASE_MODEL=RandomForestRegressor()
