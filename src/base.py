@@ -22,9 +22,9 @@ BASE_MODEL=LinearSVR()
 #BASE_MODEL=GradientBoostingRegressor()
 if isinstance(BASE_MODEL, LinearSVR):
     GRIDPARAMS = {
-    'model__C':np.arange(1, 20).astype('float64') / 20,
-    'model__epsilon':np.arange(1, 10).astype('float64') / 10,
-#    'model__C':[0.20],
+#    'model__C':np.arange(1, 20).astype('float64') / 20,
+#    'model__epsilon':np.arange(1, 10).astype('float64') / 10,
+    'model__C':[0.20],
     }
 elif isinstance(BASE_MODEL, RandomForestRegressor):
     GRIDPARAMS = {

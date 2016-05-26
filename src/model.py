@@ -75,7 +75,7 @@ def fit():
     dump(pipeline, 'dump/model', compress=3)
 
 def predict(isOffline=True):
-    artistIdList, dsList, X, y = getFeatures(isTrain=True)
+    artistIdList, dsList, X, y = getFeatures(isTrain=False)
     pipeline = load('dump/model')
     n_artists = get_n_artists()
     n_days = get_n_days(isX=False, isTrain=False)
