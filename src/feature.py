@@ -3,9 +3,12 @@
 from datetime import datetime
 from datetime import timedelta
 import numpy as np
+from minepy import MINE
 from base import N_SERIES_DAYS, TIME_FORMAT
 from database import connect
 from extract import getBorder, get_n_days, get_n_artists, get_n_series, getSeries, getSeriesRange
+
+_mine = MINE()
 
 def genFeatureDefination(name):
     db = connect()
@@ -41,6 +44,7 @@ def genFeatureDefination(name):
             beginSeriesTest, endSeriesTest = getSeriesRange(j, isTrain=False) 
             n_series_days = (endSeriesTrain - beginSeriesTrain).days + 1
 
+            best_mic = -1
             best_corr = -1 
             offset_to_endXTrain = -n_series_days
             while True:
@@ -50,21 +54,25 @@ def genFeatureDefination(name):
 
                 playsSeries = playsTrainList[i*n_y_days+j*N_SERIES_DAYS:i*n_y_days+j*N_SERIES_DAYS+n_series_days]
 #                print '[plays]', beginSeriesTrain, endSeriesTrain, playsSeries
-                meanPlaysSeries  = np.mean(playsSeries)
-                stdPlaysSeries  = np.std(playsSeries)
-                playsSeries = (playsSeries - meanPlaysSeries) / stdPlaysSeries if stdPlaysSeries != 0.0 else 0.0
+#                meanPlaysSeries  = np.mean(playsSeries)
+#                stdPlaysSeries  = np.std(playsSeries)
+#                playsSeries = (playsSeries - meanPlaysSeries) / stdPlaysSeries if stdPlaysSeries != 0.0 else 0.0
 #                print '[plays]', meanPlaysSeries, stdPlaysSeries
 
                 valSeries = valTrainList[(i+1)*n_X_days+offset_to_endXTrain:(i+1)*n_X_days+offset_to_endXTrain+n_series_days]
 #                print '[val]', offset_to_endXTrain, beginVal, valSeries, (i+1)*n_X_days+offset_to_endXTrain
-                meanValSeries  = np.mean(valSeries)
-                stdValSeries  = np.std(valSeries)
-                valSeries = (valSeries - meanValSeries) / stdValSeries if stdValSeries != 0.0 else 0.0
+#                meanValSeries  = np.mean(valSeries)
+#                stdValSeries  = np.std(valSeries)
+#                valSeries = (valSeries - meanValSeries) / stdValSeries if stdValSeries != 0.0 else 0.0
 #                print '[val]', meanValSeries, stdValSeries
 
-                corrcoef = abs(np.corrcoef([playsSeries, valSeries])[0,1] if stdPlaysSeries != 0.0 and stdValSeries != 0.0 else 0.0)
-                if corrcoef > best_corr:
-                    best_corr = corrcoef
+                _mine.compute_score(valSeries, playsSeries)
+                mic = _mine.mic()
+#                corrcoef = abs(np.corrcoef([playsSeries, valSeries])[0,1] if stdPlaysSeries != 0.0 and stdValSeries != 0.0 else 0.0)
+#                if corrcoef > best_corr:
+#                    best_corr = corrcoef
+                if mic > best_mic:
+                    best_mic = mic
                     best_offset = (beginVal - beginSeriesTrain).days
                 offset_to_endXTrain -= 1
 
@@ -75,59 +83,59 @@ def genFeatureDefination(name):
     db.close()
 
 def main():
-#    genFeatureDefination('s_plays')
-#    genFeatureDefination('s_avg_plays_last_3_days')
-#    genFeatureDefination('s_avg_plays_last_5_days')
-#    genFeatureDefination('s_avg_plays_last_7_days')
-#    genFeatureDefination('s_downloads')
-#    genFeatureDefination('s_avg_downloads_last_3_days')
-#    genFeatureDefination('s_avg_downloads_last_5_days')
-#    genFeatureDefination('s_avg_downloads_last_7_days')
-#    genFeatureDefination('s_collects')
-#    genFeatureDefination('s_avg_collects_last_3_days')
-#    genFeatureDefination('s_avg_collects_last_5_days')
-#    genFeatureDefination('s_avg_collects_last_7_days')
-#    genFeatureDefination('s_diff_plays')
-#    genFeatureDefination('s_diff_downloads')
-#    genFeatureDefination('s_diff_collects')
-#    genFeatureDefination('s_plays_div_plays_prev_1_days')
-#    genFeatureDefination('s_plays_div_plays_prev_2_days')
-#    genFeatureDefination('s_plays_div_plays_prev_4_days')
-#    genFeatureDefination('s_plays_div_plays_prev_6_days')
-#    genFeatureDefination('s_plays_div_downloads')
-#    genFeatureDefination('s_plays_div_downloads_last_3_days')
-#    genFeatureDefination('s_plays_div_downloads_last_5_days')
-#    genFeatureDefination('s_plays_div_downloads_last_7_days')
-#    genFeatureDefination('s_plays_div_collects')
-#    genFeatureDefination('s_plays_div_collects_last_3_days')
-#    genFeatureDefination('s_plays_div_collects_last_5_days')
-#    genFeatureDefination('s_plays_div_collects_last_7_days')
-#    genFeatureDefination('s_play_users')
-#    genFeatureDefination('s_avg_play_users_last_3_days')
-#    genFeatureDefination('s_avg_play_users_last_5_days')
-#    genFeatureDefination('s_avg_play_users_last_7_days')
-#    genFeatureDefination('s_users')
-#    genFeatureDefination('s_new_users')
-#    genFeatureDefination('s_new_users_div_users')
-#    genFeatureDefination('s_diff_users')
-#    genFeatureDefination('s_new_plays')
-#    genFeatureDefination('s_new_plays_div_plays')
-#    genFeatureDefination('s_download_users')
-#    genFeatureDefination('s_avg_download_users_last_3_days')
-#    genFeatureDefination('s_avg_download_users_last_5_days')
-#    genFeatureDefination('s_avg_download_users_last_7_days')
-#    genFeatureDefination('s_collect_users')
-#    genFeatureDefination('s_avg_collect_users_last_3_days')
-#    genFeatureDefination('s_avg_collect_users_last_5_days')
-#    genFeatureDefination('s_avg_collect_users_last_7_days')
-#    genFeatureDefination('s_download_users_div_play_users')
-#    genFeatureDefination('s_download_users_div_play_users_last_3_days')
-#    genFeatureDefination('s_download_users_div_play_users_last_5_days')
-#    genFeatureDefination('s_download_users_div_play_users_last_7_days')
-#    genFeatureDefination('s_collect_users_div_play_users')
-#    genFeatureDefination('s_collect_users_div_play_users_last_3_days')
-#    genFeatureDefination('s_collect_users_div_play_users_last_5_days')
-#    genFeatureDefination('s_collect_users_div_play_users_last_7_days')
+    genFeatureDefination('s_plays')
+    genFeatureDefination('s_avg_plays_last_3_days')
+    genFeatureDefination('s_avg_plays_last_5_days')
+    genFeatureDefination('s_avg_plays_last_7_days')
+    genFeatureDefination('s_downloads')
+    genFeatureDefination('s_avg_downloads_last_3_days')
+    genFeatureDefination('s_avg_downloads_last_5_days')
+    genFeatureDefination('s_avg_downloads_last_7_days')
+    genFeatureDefination('s_collects')
+    genFeatureDefination('s_avg_collects_last_3_days')
+    genFeatureDefination('s_avg_collects_last_5_days')
+    genFeatureDefination('s_avg_collects_last_7_days')
+    genFeatureDefination('s_diff_plays')
+    genFeatureDefination('s_diff_downloads')
+    genFeatureDefination('s_diff_collects')
+    genFeatureDefination('s_plays_div_plays_prev_1_days')
+    genFeatureDefination('s_plays_div_plays_prev_2_days')
+    genFeatureDefination('s_plays_div_plays_prev_4_days')
+    genFeatureDefination('s_plays_div_plays_prev_6_days')
+    genFeatureDefination('s_plays_div_downloads')
+    genFeatureDefination('s_plays_div_downloads_last_3_days')
+    genFeatureDefination('s_plays_div_downloads_last_5_days')
+    genFeatureDefination('s_plays_div_downloads_last_7_days')
+    genFeatureDefination('s_plays_div_collects')
+    genFeatureDefination('s_plays_div_collects_last_3_days')
+    genFeatureDefination('s_plays_div_collects_last_5_days')
+    genFeatureDefination('s_plays_div_collects_last_7_days')
+    genFeatureDefination('s_play_users')
+    genFeatureDefination('s_avg_play_users_last_3_days')
+    genFeatureDefination('s_avg_play_users_last_5_days')
+    genFeatureDefination('s_avg_play_users_last_7_days')
+    genFeatureDefination('s_users')
+    genFeatureDefination('s_new_users')
+    genFeatureDefination('s_new_users_div_users')
+    genFeatureDefination('s_diff_users')
+    genFeatureDefination('s_new_plays')
+    genFeatureDefination('s_new_plays_div_plays')
+    genFeatureDefination('s_download_users')
+    genFeatureDefination('s_avg_download_users_last_3_days')
+    genFeatureDefination('s_avg_download_users_last_5_days')
+    genFeatureDefination('s_avg_download_users_last_7_days')
+    genFeatureDefination('s_collect_users')
+    genFeatureDefination('s_avg_collect_users_last_3_days')
+    genFeatureDefination('s_avg_collect_users_last_5_days')
+    genFeatureDefination('s_avg_collect_users_last_7_days')
+    genFeatureDefination('s_download_users_div_play_users')
+    genFeatureDefination('s_download_users_div_play_users_last_3_days')
+    genFeatureDefination('s_download_users_div_play_users_last_5_days')
+    genFeatureDefination('s_download_users_div_play_users_last_7_days')
+    genFeatureDefination('s_collect_users_div_play_users')
+    genFeatureDefination('s_collect_users_div_play_users_last_3_days')
+    genFeatureDefination('s_collect_users_div_play_users_last_5_days')
+    genFeatureDefination('s_collect_users_div_play_users_last_7_days')
     genFeatureDefination('s_cov_user_plays')
 
 if __name__ == '__main__':
