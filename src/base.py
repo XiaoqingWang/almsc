@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import Ridge
 from sklearn.svm import LinearSVR
 from sklearn.tree import DecisionTreeRegressor
 ISOFFLINE = True
@@ -18,6 +19,7 @@ TIME_FORMAT='%Y%m%d'
 N_SERIES_DAYS=15
 DECAY_RATE=0.99
 BASE_MODEL=LinearSVR()
+#BASE_MODEL=Ridge()
 #BASE_MODEL=DecisionTreeRegressor()
 #BASE_MODEL=RandomForestRegressor()
 #BASE_MODEL=GradientBoostingRegressor()
@@ -26,6 +28,10 @@ if isinstance(BASE_MODEL, LinearSVR):
 #    'model__C':np.arange(1, 20).astype('float64') / 20,
 #    'model__epsilon':np.arange(1, 10).astype('float64') / 10,
     'model__C':[0.5],
+#    'model__loss':['squared_epsilon_insensitive'],
+    }
+elif isinstance(BASE_MODEL, Ridge):
+    GRIDPARAMS = {
     }
 elif isinstance(BASE_MODEL, RandomForestRegressor):
     GRIDPARAMS = {
@@ -87,13 +93,13 @@ FEATURES = {
 'r_is_holiday':False,
 'r_n_holidays':False,
 'r_i_holidays':True,
-'r_is_good_voice':False,
+#'r_is_good_voice':False,
 #'r_is_music_festival':False,
 #'r_diff_days':False,
 #artist & day
 'r_avg_plays_weekday':False,
 #series
-#'s_plays':False,
+'s_plays':False,
 's_avg_plays_last_3_days':False,
 's_avg_plays_last_5_days':False,
 's_avg_plays_last_7_days':False,
@@ -105,9 +111,9 @@ FEATURES = {
 #'s_avg_collects_last_3_days':False,
 #'s_avg_collects_last_5_days':False,
 #'s_avg_collects_last_7_days':False,
-'s_diff_plays':False,
-'s_diff_downloads':False,
-'s_diff_collects':False,
+#'s_diff_plays':False,
+#'s_diff_downloads':False,
+#'s_diff_collects':False,
 's_plays_div_plays_prev_1_days':False,
 's_plays_div_plays_prev_2_days':False,
 's_plays_div_plays_prev_4_days':False,
@@ -150,4 +156,7 @@ FEATURES = {
 's_work_cov_hour_plays':False,
 's_rest_cov_hour_plays':False,
 's_sleep_cov_hour_plays':False,
+'s_work_avg_plays':False,
+'s_rest_avg_plays':False,
+'s_sleep_avg_plays':False,
 }
