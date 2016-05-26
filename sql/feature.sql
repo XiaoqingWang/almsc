@@ -114,6 +114,7 @@ alter table mars_tianchi_features add (r_sum_plays int);
 alter table mars_tianchi_features add (r_sum_downloads int);
 alter table mars_tianchi_features add (r_sum_collects int);
 alter table mars_tianchi_features add (r_sum_downloads_div_sum_plays float);
+alter table mars_tianchi_features add (r_sum_collects_div_sum_plays float);
 alter table mars_tianchi_features add (r_q3_q2_q1_acceleration float);
 alter table mars_tianchi_features add (r_q4_q3_q2_acceleration float);
 alter table mars_tianchi_features add (r_normal_q2_plays_diff_q1_plays float);

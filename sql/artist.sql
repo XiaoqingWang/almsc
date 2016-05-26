@@ -102,7 +102,76 @@ action_type char(1),
 cov float,
 primary key(artist_id, ds, action_type)
 );
-insert into mars_tianchi_artist_cov_user_actions
-select artist_id, ds, action_type, std(n) / avg(n) as cov
-from mars_tianchi_artist_user_actions
-group by artist_id, ds, action_type;
+insert into mars_tianchi_artist_cov_user_actions select artist_id, ds, action_type, std(n) / avg(n) as cov from mars_tianchi_artist_user_actions group by artist_id, ds, action_type;
+-----------------------------------------------
+--artist hour actions
+drop table if exists mars_tianchi_artist_hour_actions;
+create table mars_tianchi_artist_hour_actions
+(
+artist_id char(32),
+ds char(8),
+hour char(2),
+action_type char(1),
+n int,
+primary key(artist_id, ds, hour, action_type)
+);
+insert into mars_tianchi_artist_hour_actions select artist_id, ds, hour, action_type, sum(n) from mars_tianchi_song_user_hour_actions group by artist_id, ds, hour, action_type;
+--select * from mars_tianchi_artist_hour_actions where action_type = '1' and artist_id = '2b7fedeea967becd9408b896de8ff903' order by artist_id, ds, hour
+--select hour, avg(n) from mars_tianchi_artist_hour_actions where action_type = '1' group by hour
+-----------------------------------------------
+--artist work cov hour actions
+drop table if exists mars_tianchi_artist_work_cov_hour_actions;
+create table mars_tianchi_artist_work_cov_hour_actions
+(
+artist_id char(32),
+ds char(8),
+action_type char(1),
+n_hours int,
+avg float,
+std float,
+cov float,
+primary key(artist_id, ds, action_type)
+);
+insert into mars_tianchi_artist_work_cov_hour_actions (artist_id, ds, action_type, n_hours) select artist_id, ds, action_type, count(*) from mars_tianchi_artist_hour_actions where hour between '08' and '16' group by artist_id, ds, action_type;
+update mars_tianchi_artist_work_cov_hour_actions set avg = (select sum(n)/ 9 from mars_tianchi_artist_hour_actions where hour between '08' and '16' and mars_tianchi_artist_work_cov_hour_actions.artist_id = mars_tianchi_artist_hour_actions.artist_id and mars_tianchi_artist_work_cov_hour_actions.ds = mars_tianchi_artist_hour_actions.ds and mars_tianchi_artist_work_cov_hour_actions.action_type = mars_tianchi_artist_hour_actions.action_type);
+update mars_tianchi_artist_work_cov_hour_actions set std = sqrt(((select sum(pow(n-mars_tianchi_artist_work_cov_hour_actions.avg, 2)) from mars_tianchi_artist_hour_actions where hour between '08' and '16' and mars_tianchi_artist_work_cov_hour_actions.artist_id = mars_tianchi_artist_hour_actions.artist_id and mars_tianchi_artist_work_cov_hour_actions.ds = mars_tianchi_artist_hour_actions.ds and mars_tianchi_artist_work_cov_hour_actions.action_type = mars_tianchi_artist_hour_actions.action_type) + (9-mars_tianchi_artist_work_cov_hour_actions.n_hours) * pow(0-mars_tianchi_artist_work_cov_hour_actions.avg, 2))/9);
+update mars_tianchi_artist_work_cov_hour_actions set cov = if(avg = 0, 0, std / avg);
+--select * from mars_tianchi_artist_work_cov_hour_actions where action_type = '1';
+-----------------------------------------------
+--artist rest cov hour actions
+drop table if exists mars_tianchi_artist_rest_cov_hour_actions;
+create table mars_tianchi_artist_rest_cov_hour_actions
+(
+artist_id char(32),
+ds char(8),
+action_type char(1),
+n_hours int,
+avg float,
+std float,
+cov float,
+primary key(artist_id, ds, action_type)
+);
+insert into mars_tianchi_artist_rest_cov_hour_actions (artist_id, ds, action_type, n_hours) select artist_id, ds, action_type, count(*) from mars_tianchi_artist_hour_actions where hour between '17' and '22' group by artist_id, ds, action_type;
+update mars_tianchi_artist_rest_cov_hour_actions set avg = (select sum(n)/ 6 from mars_tianchi_artist_hour_actions where hour between '17' and '22' and mars_tianchi_artist_rest_cov_hour_actions.artist_id = mars_tianchi_artist_hour_actions.artist_id and mars_tianchi_artist_rest_cov_hour_actions.ds = mars_tianchi_artist_hour_actions.ds and mars_tianchi_artist_rest_cov_hour_actions.action_type = mars_tianchi_artist_hour_actions.action_type);
+update mars_tianchi_artist_rest_cov_hour_actions set std = sqrt(((select sum(pow(n-mars_tianchi_artist_rest_cov_hour_actions.avg, 2)) from mars_tianchi_artist_hour_actions where hour between '17' and '22' and mars_tianchi_artist_rest_cov_hour_actions.artist_id = mars_tianchi_artist_hour_actions.artist_id and mars_tianchi_artist_rest_cov_hour_actions.ds = mars_tianchi_artist_hour_actions.ds and mars_tianchi_artist_rest_cov_hour_actions.action_type = mars_tianchi_artist_hour_actions.action_type) + (6-mars_tianchi_artist_rest_cov_hour_actions.n_hours) * pow(0-mars_tianchi_artist_rest_cov_hour_actions.avg, 2))/6);
+update mars_tianchi_artist_rest_cov_hour_actions set cov = if(avg = 0, 0, std / avg);
+--select * from mars_tianchi_artist_rest_cov_hour_actions where action_type = '1';
+-----------------------------------------------
+--artist rest sleep hour actions
+drop table if exists mars_tianchi_artist_sleep_cov_hour_actions;
+create table mars_tianchi_artist_sleep_cov_hour_actions
+(
+artist_id char(32),
+ds char(8),
+action_type char(1),
+n_hours int,
+avg float,
+std float,
+cov float,
+primary key(artist_id, ds, action_type)
+);
+insert into mars_tianchi_artist_sleep_cov_hour_actions (artist_id, ds, action_type, n_hours) select artist_id, ds, action_type, count(*) from mars_tianchi_artist_hour_actions where hour between '01' and '06' group by artist_id, ds, action_type;
+update mars_tianchi_artist_sleep_cov_hour_actions set avg = (select sum(n)/ 6 from mars_tianchi_artist_hour_actions where hour between '01' and '06' and mars_tianchi_artist_sleep_cov_hour_actions.artist_id = mars_tianchi_artist_hour_actions.artist_id and mars_tianchi_artist_sleep_cov_hour_actions.ds = mars_tianchi_artist_hour_actions.ds and mars_tianchi_artist_sleep_cov_hour_actions.action_type = mars_tianchi_artist_hour_actions.action_type);
+update mars_tianchi_artist_sleep_cov_hour_actions set std = sqrt(((select sum(pow(n-mars_tianchi_artist_sleep_cov_hour_actions.avg, 2)) from mars_tianchi_artist_hour_actions where hour between '01' and '06' and mars_tianchi_artist_sleep_cov_hour_actions.artist_id = mars_tianchi_artist_hour_actions.artist_id and mars_tianchi_artist_sleep_cov_hour_actions.ds = mars_tianchi_artist_hour_actions.ds and mars_tianchi_artist_sleep_cov_hour_actions.action_type = mars_tianchi_artist_hour_actions.action_type) + (6-mars_tianchi_artist_sleep_cov_hour_actions.n_hours) * pow(0-mars_tianchi_artist_sleep_cov_hour_actions.avg, 2))/6);
+update mars_tianchi_artist_sleep_cov_hour_actions set cov = if(avg = 0, 0, std / avg);
+--select * from mars_tianchi_artist_sleep_cov_hour_actions where action_type = '1';
