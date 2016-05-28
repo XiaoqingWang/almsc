@@ -45,7 +45,7 @@ top float,
 bottom float,
 primary key(artist_id, is_X, is_train)
 );
-insert into mars_tianchi_samples_artist_statics select artist_id, is_X, is_train, sum(plays) as sum_plays, max(plays) as max_plays, min(plays) as min_plays, avg(plays) as avg_plays, std(plays) as std_plays, 0 as mid_plays, (avg(plays) + 2 * std(plays)) as top, (avg(plays) - 2 * std(plays))  as bottom from mars_tianchi_samples group by artist_id, is_X, is_train;
+insert into mars_tianchi_samples_artist_statics select artist_id, is_X, is_train, sum(plays) as sum_plays, max(plays) as max_plays, min(plays) as min_plays, avg(plays) as avg_plays, std(plays) as std_plays, (avg(plays) + 2 * std(plays)) as top, (avg(plays) - 2 * std(plays))  as bottom from mars_tianchi_samples group by artist_id, is_X, is_train;
 --select * from mars_tianchi_samples_artist_statics
 select * from mars_tianchi_samples 
 --delete from mars_tianchi_samples 

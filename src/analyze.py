@@ -28,9 +28,9 @@ def showPredict(i_artists=0):
         yTrainData = np.mean(yTrain,  axis=0)
         plt.title('Plays of Artists per Day')
 
-    plt.plot_date(xData, yRealData, fmt='g', label='real')
-    plt.plot_date(xData, yPredictData, fmt='r', label='predict')
-    plt.plot_date(xData, yTrainData, fmt='b', label='train')
+    plt.plot_date(xData, yRealData, fmt='-^g', label='real')
+    plt.plot_date(xData, yPredictData, fmt='-vr', label='predict')
+    plt.plot_date(xData, yTrainData, fmt='-ob', label='train')
     plt.xlabel('day')
     plt.ylabel('plays')
     plt.show()

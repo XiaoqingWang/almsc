@@ -225,6 +225,18 @@ delete from mars_tianchi_series where name = 's_cov_user_plays';
 insert into mars_tianchi_series(artist_id, ds, name) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, 's_cov_user_plays' as name from mars_tianchi_artists, mars_tianchi_ds;
 update mars_tianchi_series set mars_tianchi_series.val = ifnull((select cov from mars_tianchi_artist_cov_user_actions where mars_tianchi_series.artist_id = mars_tianchi_artist_cov_user_actions.artist_id and mars_tianchi_artist_cov_user_actions.action_type = '1' and mars_tianchi_series.ds = mars_tianchi_artist_cov_user_actions.ds), 0.0) where mars_tianchi_series.name = 's_cov_user_plays';
 -----------------------------------------------
+delete from mars_tianchi_series where name = 's_work_cov_hour_plays';
+insert into mars_tianchi_series(artist_id, ds, name) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, 's_work_cov_hour_plays' as name from mars_tianchi_artists, mars_tianchi_ds;
+update mars_tianchi_series set mars_tianchi_series.val = ifnull((select cov from mars_tianchi_artist_work_cov_hour_actions where mars_tianchi_series.artist_id = mars_tianchi_artist_work_cov_hour_actions.artist_id and mars_tianchi_artist_work_cov_hour_actions.action_type = '1' and mars_tianchi_series.ds = mars_tianchi_artist_work_cov_hour_actions.ds), 0.0) where mars_tianchi_series.name = 's_work_cov_hour_plays';
+-----------------------------------------------
+delete from mars_tianchi_series where name = 's_rest_cov_hour_plays';
+insert into mars_tianchi_series(artist_id, ds, name) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, 's_rest_cov_hour_plays' as name from mars_tianchi_artists, mars_tianchi_ds;
+update mars_tianchi_series set mars_tianchi_series.val = ifnull((select cov from mars_tianchi_artist_rest_cov_hour_actions where mars_tianchi_series.artist_id = mars_tianchi_artist_rest_cov_hour_actions.artist_id and mars_tianchi_artist_rest_cov_hour_actions.action_type = '1' and mars_tianchi_series.ds = mars_tianchi_artist_rest_cov_hour_actions.ds), 0.0) where mars_tianchi_series.name = 's_rest_cov_hour_plays';
+-----------------------------------------------
+delete from mars_tianchi_series where name = 's_sleep_cov_hour_plays';
+insert into mars_tianchi_series(artist_id, ds, name) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, 's_sleep_cov_hour_plays' as name from mars_tianchi_artists, mars_tianchi_ds;
+update mars_tianchi_series set mars_tianchi_series.val = ifnull((select cov from mars_tianchi_artist_sleep_cov_hour_actions where mars_tianchi_series.artist_id = mars_tianchi_artist_sleep_cov_hour_actions.artist_id and mars_tianchi_artist_sleep_cov_hour_actions.action_type = '1' and mars_tianchi_series.ds = mars_tianchi_artist_sleep_cov_hour_actions.ds), 0.0) where mars_tianchi_series.name = 's_sleep_cov_hour_plays';
+-----------------------------------------------
 delete from mars_tianchi_series where name = 's_work_avg_plays';
 insert into mars_tianchi_series(artist_id, ds, name) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, 's_work_avg_plays' as name from mars_tianchi_artists, mars_tianchi_ds;
 update mars_tianchi_series set mars_tianchi_series.val = ifnull((select avg from mars_tianchi_artist_work_cov_hour_actions where mars_tianchi_series.artist_id = mars_tianchi_artist_work_cov_hour_actions.artist_id and mars_tianchi_artist_work_cov_hour_actions.action_type = '1' and mars_tianchi_series.ds = mars_tianchi_artist_work_cov_hour_actions.ds), 0.0) where mars_tianchi_series.name = 's_work_avg_plays';
