@@ -69,7 +69,7 @@ def genFeatureDefination(name):
 
                 _mine.compute_score(valSeries, playsSeries)
                 mic = _mine.mic() * rate
-#                corrcoef = abs(np.corrcoef([playsSeries, valSeries])[0,1] if stdPlaysSeries != 0.0 and stdValSeries != 0.0 else 0.0)
+#                corrcoef = abs(np.corrcoef([playsSeries, valSeries])[0,1] if stdPlaysSeries != 0.0 and stdValSeries != 0.0 else 0.0) * rate
 #                if corrcoef > best_corr:
 #                    best_corr = corrcoef
                 if mic > best_mic:
@@ -142,9 +142,9 @@ def main():
 #    genFeatureDefination('s_work_cov_hour_plays')
 #    genFeatureDefination('s_rest_cov_hour_plays')
 #    genFeatureDefination('s_sleep_cov_hour_plays')
-    genFeatureDefination('s_work_avg_plays')
-    genFeatureDefination('s_rest_avg_plays')
-    genFeatureDefination('s_sleep_avg_plays')
+#    genFeatureDefination('s_work_avg_plays')
+#    genFeatureDefination('s_rest_avg_plays')
+#    genFeatureDefination('s_sleep_avg_plays')
 
 
 if __name__ == '__main__':
