@@ -2,7 +2,7 @@ from datetime import datetime
 from argparse import ArgumentParser
 import numpy as np
 from matplotlib import pyplot as plt 
-from matplotlib.dates import date2num
+from matplotlib.dates import date2num, DateFormatter 
 from base import ISOFFLINE
 from extract import get_n_artists, get_n_days, getPlays
 from model import predict
@@ -28,6 +28,8 @@ def showPredict(i_artists=0):
         yTrainData = np.mean(yTrain,  axis=0)
         plt.title('Plays of Artists per Day')
 
+    ax = plt.axes()
+    ax.xaxis.set_major_formatter(DateFormatter('%m%d'))
     plt.plot_date(xData, yRealData, fmt='-^g', label='real')
     plt.plot_date(xData, yPredictData, fmt='-vr', label='predict')
     plt.plot_date(xData, yTrainData, fmt='-ob', label='train')

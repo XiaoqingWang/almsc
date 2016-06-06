@@ -3,7 +3,8 @@ from datetime import datetime
 from argparse import ArgumentParser
 import numpy as np
 from matplotlib import pyplot as plt
-from matplotlib.dates import date2num
+from matplotlib.dates import date2num, DateFormatter
+from matplotlib.backends.backend_pdf import PdfPages
 from extract import get_n_artists, get_n_days
 from database import connect
 from extract import getPredict
@@ -34,21 +35,26 @@ def _analyze(recordIdList):
     for recordId in recordIdList:
         resultDict[recordId] = getPredict(recordId)
 
-    fig, axes = plt.subplots(ncols=n_artists)
+    pdf = PdfPages('../data/record.pdf')
     for i in range(n_artists):
+        fig = plt.figure()
+        ax = plt.axes()
+        ax.xaxis.set_major_formatter(DateFormatter('%m%d'))
         for recordId in recordIdList:
             result = resultDict[recordId]
-            dsList = result[:,2]
+            dsList = result[:,1]
             firstDay = datetime.strptime(dsList[0], '%Y%m%d')
-            artist_id = result[0,1]
+            artist_id = result[i*n_days,0]
             xData = np.arange(n_days) + date2num(firstDay)
-            yData = result[i*n_days:(i+1)*n_days,3]
-            subplot = axes[i]
-            subplot.plot_date(xData, yData, label=artist_id)
-            subplot.xlabel('day')
-            subplot.ylabel('plays')
-            subplot.legend(loc='best', shadow=True, fontsize='x-large')
-    plt.show()
+            yData = result[i*n_days:(i+1)*n_days,2]
+            plt.plot_date(xData, yData, fmt='-', label=recordId)
+        plt.legend(loc='best', shadow=True)
+        plt.xlabel('day')
+        plt.ylabel('plays')
+        plt.title(artist_id)
+        pdf.savefig(fig)
+        plt.close()
+    pdf.close()
 
 def main():
     parser = ArgumentParser(description='Prediction Recording Application')
