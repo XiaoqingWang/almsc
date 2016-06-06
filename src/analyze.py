@@ -36,8 +36,8 @@ def showPredict(i_artists=0):
     plt.show()
 
 def main():
-    parser = ArgumentParser(description='analyze application for real plays, predicted plays and plays of train period') 
-    parser.add_argument('-i', action='store', dest='i_artists', default=0, type=int, help='Number of artist, 0 for all')
+    parser = ArgumentParser(description='Analyze Application for Real Plays, Predicted Plays and Plays of Train Period') 
+    parser.add_argument('-i', action='store', dest='i_artists', default=0, type=int, help='Number of Artist, 0 for All')
     argsDict = parser.parse_args()
     showPredict(i_artists=argsDict.i_artists)
 
