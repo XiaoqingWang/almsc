@@ -1,5 +1,5 @@
-from sys import argv
 from datetime import datetime
+from argparse import ArgumentParser
 import numpy as np
 from matplotlib import pyplot as plt 
 from matplotlib.dates import date2num
@@ -36,7 +36,10 @@ def showPredict(i_artists=0):
     plt.show()
 
 def main():
-    showPredict(i_artists=int(argv[1]))
+    parser = argparse.ArgumentParser(description='analyze application for real plays, predicted plays and plays of train period') 
+    parser.add_argument('-i', action='store', dest='i_artists', type=int, help='Number of artist, 0 for all')
+    argsDict = parser.parse_args()
+    showPredict(i_artists=argsDict.i_artists)
 
 if __name__ == '__main__':
     main()
