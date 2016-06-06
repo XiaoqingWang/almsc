@@ -81,3 +81,8 @@ def getPlays(isTrain=True):
     data = _fetchall(sql)
 
     return data[:,0]
+
+def getPredict(recordId):
+    sql = 'select * from mars_tianchi_artist_plays_predict where record_id = \'%s\' order by artist_id, ds' % recordId
+    data = _fetchall(sql)
+    return data[:,1:]
