@@ -33,6 +33,7 @@ def showPredict(i_artists=0):
     plt.plot_date(xData, yTrainData, fmt='-ob', label='train')
     plt.xlabel('day')
     plt.ylabel('plays')
+    plt.legend(loc='best', shadow=True, fontsize='x-large')
     plt.show()
 
 def main():
