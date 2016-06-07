@@ -35,7 +35,7 @@ def _analyze(recordIdList):
     for recordId in recordIdList:
         resultDict[recordId] = getPredict(recordId)
 
-    pdf = PdfPages('../data/record.pdf')
+    pdf = PdfPages('../report/record.pdf')
     for i in range(n_artists):
         fig = plt.figure()
         ax = plt.axes()

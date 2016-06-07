@@ -69,3 +69,6 @@ doc/
 
 # dump
 src/dump
+
+# report
+report/
