@@ -6,15 +6,24 @@ from sklearn.linear_model import Ridge
 from sklearn.svm import LinearSVR
 from sklearn.tree import DecisionTreeRegressor
 ISOFFLINE = True
+ISP1 = False
 HOST = 'almsc'
 USER = 'root'
 PASSWORD = 'Contest@2016'
 if ISOFFLINE:
-    print '[-------------------------O F F L I N E-------------------------]'
-    DATABASE = 'almsc_offline'
+    if ISP1:
+        print '[-------------------------P1.OFFLINE--------------------------]'
+        DATABASE = 'almsc_p1_offline'
+    else:
+        print '[-------------------------P2.OFFLINE--------------------------]'
+        DATABASE = 'almsc_p2_offline'
 else:
-    print '[--------------------------O N L I N E--------------------------]'
-    DATABASE = 'almsc_online'
+    if ISP1:
+        print '[--------------------------P1.ONLINE--------------------------]'
+        database = 'almsc_p1_online'
+    else:
+        print '[--------------------------P2.ONLINE--------------------------]'
+        database = 'almsc_p2_online'
 TIME_FORMAT='%Y%m%d'
 N_SERIES_DAYS=15
 DECAY_RATE=0.99
