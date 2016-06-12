@@ -18,12 +18,13 @@ update mars_tianchi_artists set mars_tianchi_artists.n_songs = (select count(*) 
 update mars_tianchi_artists set gender = (select distinct gender from mars_tianchi_songs where mars_tianchi_artists.artist_id = mars_tianchi_songs.artist_id);
 --artist language
 update mars_tianchi_artists set mars_tianchi_artists.n_languages = (select count(distinct language) from mars_tianchi_songs where mars_tianchi_artists.artist_id = mars_tianchi_songs.artist_id); drop table if exists mars_tianchi_artist_languages;
+drop table if exists mars_tianchi_artist_languages;
 create table mars_tianchi_artist_languages
 (
 artist_id char(32),
 language int,
 n int,
-primary key(artist_id, n)
+primary key(artist_id, language)
 );
 insert into mars_tianchi_artist_languages select artist_id, language, count(*) from mars_tianchi_songs group by artist_id, language;
 update mars_tianchi_artists set mars_tianchi_artists.mode_language = (select language from mars_tianchi_artist_languages where mars_tianchi_artist_languages.artist_id = mars_tianchi_artists.artist_id order by mars_tianchi_artist_languages.n desc limit 1);
