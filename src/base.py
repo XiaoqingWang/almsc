@@ -5,7 +5,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import Ridge
 from sklearn.svm import LinearSVR
 from sklearn.tree import DecisionTreeRegressor
-ISOFFLINE = True
+ISOFFLINE = False
 ISP1 = False
 HOST = 'almsc'
 USER = 'root'
@@ -20,10 +20,10 @@ if ISOFFLINE:
 else:
     if ISP1:
         print '[--------------------------P1.ONLINE--------------------------]'
-        database = 'almsc_p1_online'
+        DATABASE = 'almsc_p1_online'
     else:
         print '[--------------------------P2.ONLINE--------------------------]'
-        database = 'almsc_p2_online'
+        DATABASE = 'almsc_p2_online'
 TIME_FORMAT='%Y%m%d'
 N_SERIES_DAYS=15
 DECAY_RATE=0.99
