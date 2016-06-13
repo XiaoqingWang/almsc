@@ -8,4 +8,3 @@ ds char(8),
 plays int,
 primary key(record_id, artist_id, ds)
 );
---select * from mars_tianchi_artist_plays_predict

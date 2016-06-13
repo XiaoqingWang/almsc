@@ -26,7 +26,7 @@ insert into mars_tianchi_samples(artist_id, ds, is_X, is_train) select mars_tian
 insert into mars_tianchi_samples(artist_id, ds, is_X, is_train) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, '0' as is_X, '1' as is_train from mars_tianchi_artists, mars_tianchi_ds where mars_tianchi_ds.ds between @begin_y_train and @end_y_train;
 insert into mars_tianchi_samples(artist_id, ds, is_X, is_train) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, '1' as is_X, '0' as is_train from mars_tianchi_artists, mars_tianchi_ds where mars_tianchi_ds.ds between @begin_X_test and @end_X_test;
 insert into mars_tianchi_samples(artist_id, ds, is_X, is_train) select mars_tianchi_artists.artist_id, mars_tianchi_ds.ds, '0' as is_X, '0' as is_train from mars_tianchi_artists, mars_tianchi_ds where mars_tianchi_ds.ds between @begin_y_test and @end_y_test;
-update mars_tianchi_samples left join mars_tianchi_artist_actions on mars_tianchi_samples.artist_id = mars_tianchi_artist_actions.artist_id and mars_tianchi_samples.ds = mars_tianchi_artist_actions.ds and mars_tianchi_artist_actions.action_type = '1' set mars_tianchi_samples.plays = mars_tianchi_artist_actions.n;
+update mars_tianchi_samples left join mars_tianchi_artist_actions on mars_tianchi_samples.artist_id = mars_tianchi_artist_actions.artist_id and mars_tianchi_samples.ds = mars_tianchi_artist_actions.ds and mars_tianchi_artist_actions.action_type = '1' set mars_tianchi_samples.plays = ifnull(mars_tianchi_artist_actions.n, 0);
 --select * from mars_tianchi_samples
 
 --abnormal

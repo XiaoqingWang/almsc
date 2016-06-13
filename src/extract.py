@@ -73,14 +73,7 @@ def getArtistIdList():
     return data[:,0]
 
 def getPlays(isTrain=True):
-    beginY = getBorder(isBegin=True, isX=False, isTrain=isTrain)
-    endY = getBorder(isBegin=False, isX=False, isTrain=isTrain)
-    sql = 'select n from mars_tianchi_artist_actions'
-    sql += ' where action_type = \'1\' and ds between \'%s\' and \'%s\' order by artist_id, ds' % (beginY.strftime(TIME_FORMAT), endY.strftime(TIME_FORMAT))
-
-    data = _fetchall(sql)
-
-    return data[:,0]
+    return _getPlays(isTrain=isTrain)
 
 def getPredict(recordId):
     sql = 'select * from mars_tianchi_artist_plays_predict where record_id = \'%s\' order by artist_id, ds' % recordId
